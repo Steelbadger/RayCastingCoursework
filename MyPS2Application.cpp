@@ -54,27 +54,15 @@ void MyPS2Application::Init()
 	for(int sig=0; sig<128; sig++)
 		signal(sig, sig_handle);
 
-	// Set up the DMA packet to clear the screen. We want to clear to blue.
-	SPS2Manager.InitScreenClear(0, 0x25, 0x10);
+	// Set up the DMA packet to clear the screen. We want to clear to black.
+	SPS2Manager.InitScreenClear(0, 0, 0);
 	
-	testPosition = Vector2(2.0, 2.0);
-	testDirection = Vector2(1.0, 1.0);
-	testRenderer.SetLevel(&testLevel);
-	testRenderer.SetPosition(testPosition);
-	testRenderer.SetDirection(testDirection);
-	testRenderer.SetFoV(60.0f);
-	testRenderer.InitTextures();
-
-	Mob testMob(Vector2(3.0f, 3.0f), Vector2(1.4f, 1.4f), "testEnemy.bmp", Vector2(0,0), Vector2(64, 64));
-	testMobs.AddMob(testMob);
-	testMob = Mob(Vector2(2.0f, 3.0f), Vector2(1.5f, 1.5f), "testEnemy.bmp", Vector2(0,0), Vector2(64, 64));
-	testMobs.AddMob(testMob);
-	testMob = Mob(Vector2(18.0f, 2.0f), Vector2(1.6f, 1.6f), "testEnemy.bmp", Vector2(0,0), Vector2(64, 64));
-	testMobs.AddMob(testMob);
-	timeDiff = 10.0f;
+	startupState.Initialise();
+	VIFDynamicDMA.Fire();	
+	menuState.Initialise();
+	playState.Initialise();
+	currentState = &startupState;
 	
-	testGun.Init();
-
 }
 
 void MyPS2Application::CleanUp()
@@ -94,43 +82,8 @@ void MyPS2Application::Update()
 	// Check for exit condition	
 	if((pad[0].buttons & PAD_START)&&(pad[0].buttons & PAD_SELECT)) quitting_ = true;	
 	
-	
-	lastTime = currentTime;
-	currentTime = clock();
-	timeDiff = (currentTime - lastTime)/CLOCKS_PER_SEC;
-
-	
-	testDirection.Rotate(pad[0].axes[2]*timeDiff * 4.0f);
-	testRenderer.SetDirection(testDirection);
-	testStrafe = testDirection;
-	testStrafe.Rotate(90);
-	Vector2 translationVector = testDirection.Normalise() * (-pad[0].axes[1] * timeDiff * 3.0f) + testStrafe.Normalise() * (pad[0].axes[0] * timeDiff * 3.0f);
-	int x, y;
-	x = testPosition.x + (translationVector.x) + (translationVector.x/Abs(translationVector.x))*0.2;
-	y = testPosition.y + (translationVector.y) + (translationVector.y/Abs(translationVector.y))*0.2;
-
-	if (pad[0].pressed & PAD_CROSS) {
-		std::cout << "TimeDiff: " << timeDiff << "\tFrameRate: " << 1/timeDiff << std::endl;
-	}
-	
-	if (pad[0].pressed & PAD_L2) {
-		testMobs.ShootMobs(testRenderer.GetCentreWallDistance());
-		testGun.Fire();
-	}		
-	
-	if (testLevel.At(x, testPosition.y) == 0) {
-		testPosition.x += translationVector.x;
-	}
-	if (testLevel.At(testPosition.x, y) == 0) {
-		testPosition.y += translationVector.y;
-	}
-	
-	testRenderer.ConstructDepthMap();	
-	testRenderer.SetPosition(testPosition);	
-	testRenderer.BuildScene();
-	testMobs.FindMobPositions(testPosition, testDirection, 60.0f);
-	testGun.Update();
-		
+	currentState->Update();
+	CheckState();
 
 }
 
@@ -138,8 +91,31 @@ void MyPS2Application::Render()
 {
 	// All drawing commands should be between BeginScene and EndScene
 	SPS2Manager.BeginScene();
-	testRenderer.DrawScene();
-	testMobs.DrawMobs();
-	testGun.Render();
+	currentState->Render();
 	SPS2Manager.EndScene();			
+}
+
+void MyPS2Application::CheckState()
+{
+	switch (currentState->GetReturn()) {
+		case GameState::NONE :			return;
+		case GameState::STARTUP : 		currentState = &startupState;
+										break;
+		case GameState::MENU : 			currentState = &menuState;
+										break;
+		case GameState::OPTIONS : 		currentState = &menuState;
+										break;
+		case GameState::HELP : 			currentState = &menuState;
+										break;
+		case GameState::GAMEACTIVE :	currentState = &playState;
+										break;
+		case GameState::GAMEPAUSED : 	currentState = &playState;
+										break;
+		case GameState::GAMEWIN :		currentState = &menuState;
+										break;
+		case GameState::GAMELOSE : 		currentState = &menuState;
+										break;
+		case GameState::QUIT :			quitting_ = true;
+										break;
+	}
 }

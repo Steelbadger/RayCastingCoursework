@@ -1,13 +1,17 @@
 #include "menustate.h"
 #include "texturemanager.h"
 
+#include "PS2Defines.h"
+#include "pad.h"
+#include "dma.h"
+
 
 MenuState::MenuState() : 
 	play(0, 0, 128, 32),
 	options(0, 32, 128, 32),
 	help(0, 64, 128, 32),
 	quit(0, 128, 128, 32),
-	background(-320, -256, 640, 512),
+	background(0, 0, 640, 512),
 	cursorPos(PLAY),
 	menuImage("menu.bmp"),
 	splashImage("splash.bmp")
@@ -35,9 +39,6 @@ void MenuState::Initialise()
 	quit.SetDepth(901);
 	
 	TexManager.LoadTexture(menuImage);
-
-	TexManager.UploadTextureToBuffer(splashImage, TextureManager::BUFFER1);
-	TexManager.UploadTextureToBuffer(menuImage, TextureManager::BUFFER2);
 }
 
 void MenuState::Update()
@@ -55,16 +56,37 @@ void MenuState::Update()
 							break;
 		}
 	}
+	if (pad[0].axes[1] == 0) {
+		analogueDelay = 10;
+	}
 
 	int cursorTemp = int(cursorPos);
-	if (pad[0].pressed & PAD_UP || pad[0].axes[1] > 0) {
-		cursorTemp++;
+	if (pad[0].pressed & PAD_UP) {
+		cursorTemp--;
 		GetOptionOfCursor().UniformScale(1.0);
 	}
-	if (pad[0].pressed & PAD_DOWN || pad[0].axes[1] < 0) {
-		cursorTemp--;
+	if (pad[0].axes[1] < 0) {
+		analogueDelay -=pad[0].axes[1];
+		if (analogueDelay > 10) {
+			analogueDelay = 0;		
+			cursorTemp--;
+			GetOptionOfCursor().UniformScale(1.0);
+		}
+	}	
+	
+	if (pad[0].pressed & PAD_DOWN) {
+		cursorTemp++;
 		GetOptionOfCursor().UniformScale(1.0);		
 	}
+	
+	if (pad[0].axes[1] > 0) {
+		analogueDelay += pad[0].axes[1];
+		if (analogueDelay > 10) {
+			analogueDelay = 0;
+			cursorTemp++;
+			GetOptionOfCursor().UniformScale(1.0);
+		}
+	}		
 	cursorTemp = (cursorTemp > 3 ? 3 : cursorTemp);
 	cursorTemp = (cursorTemp < 0 ? 0 : cursorTemp);
 	cursorPos = MenuOption(cursorTemp);
@@ -74,6 +96,8 @@ void MenuState::Update()
 
 void MenuState::Render()
 {
+	TexManager.UploadTextureToBuffer(splashImage, TextureManager::BUFFER1);
+	TexManager.UploadTextureToBuffer(menuImage, TextureManager::BUFFER2);
 	TexManager.SetTexture(splashImage);
 	background.Render();
 	TexManager.SetTexture(menuImage);
@@ -94,5 +118,5 @@ PS2SpriteT& MenuState::GetOptionOfCursor()
 		}
 		
 		//  Should Never Happen
-		return PS2SpriteT();
+		//return PS2SpriteT();
 }

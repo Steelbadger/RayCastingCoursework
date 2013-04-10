@@ -1,6 +1,7 @@
 #ifndef __MENUSTATE_H__
 #define __MENUSTATE_H__
 #include "gamestate.h"
+#include "primitives.h"
 
 #include <string>
 
@@ -24,6 +25,7 @@ private:
 	MenuOption cursorPos;
 	
 	PS2SpriteT& GetOptionOfCursor();
+	float analogueDelay;
 	
 	std::string menuImage;
 	std::string splashImage;

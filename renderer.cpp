@@ -22,7 +22,7 @@ Renderer::Renderer()
 	for (int i = 0; i < NUMTEXTURES; i++)
 	{
 		textureMap[i] = Vector2((i%4)*64, (i/4)*64);
-		std::cout << textureMap[i] << std::endl;
+		//std::cout << textureMap[i] << std::endl;
 	}
 }
 
@@ -107,13 +107,10 @@ void Renderer::ConstructDepthMap()
 
 void Renderer::OutputDepthMap()
 {
-	std::cout << "FoV Before DepthDump: " << FoV << std::endl;
 	for (int i = 0; i <= RES; i++) {
 		std::cout << depthMap[i] << " : ";
 	}
 	std::cout << std::endl;	
-	std::cout << "FoV After DepthDump: " << FoV << std::endl;	
-
 }
 
 float Renderer::GetCentreWallDistance()

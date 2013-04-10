@@ -2,6 +2,7 @@
 #define __STARTUPSTATE_H__
 
 #include "gamestate.h"
+#include "primitives.h"
 
 #include <string>
 
@@ -17,6 +18,8 @@ public:
 	virtual void Render();
 
 private:
+	void InitRender();
+	
 	PS2SpriteT splash;
 	PS2SpriteT loadingStart;
 	PS2SpriteT titleText;

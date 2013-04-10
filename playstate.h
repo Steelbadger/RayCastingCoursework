@@ -1,6 +1,7 @@
 #ifndef __PLAYSTATE_H__
 #define __PLAYSTATE_H__
 
+#include "gamestate.h"
 #include "level.h"
 #include "renderer.h"
 #include "mobmanager.h"
@@ -14,7 +15,6 @@ public:
 	PlayState();
 	virtual ~PlayState();
 	
-	
 	virtual void Initialise();
 	virtual void Update();
 	virtual void Render();
@@ -24,6 +24,9 @@ private:
 	Renderer testRenderer;
 	MobManager testMobs;
 	Gun testGun;
+	
+	double timer;
+	double timeDif;
 	
 	
 	Vector2 testDirection;

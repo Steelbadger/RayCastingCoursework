@@ -24,6 +24,9 @@ OBJS = 	PS2Framework/src/primitives.o \
 		mobmanager.o \
 		animatedsprite.o \
 		gun.o \
+		playstate.o \
+		startupstate.o \
+		menustate.o \
 		texturemanager.o \
 		MyPS2Application.o \
 		main.o

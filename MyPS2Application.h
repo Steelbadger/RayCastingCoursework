@@ -1,16 +1,9 @@
 #ifndef _MYPS2APPLICATION_H
 #define _MYPS2APPLICATION_H
-
-#include "primitives.h"
-#include "texture.h"
-#include "raycaster.h"
-#include "level.h"
-#include "vector2.h"
-#include "renderer.h"
-#include "mobmanager.h"
-#include "mob.h"
-#include "animatedsprite.h"
-#include "gun.h"
+#include "gamestate.h"
+#include "startupstate.h"
+#include "menustate.h"
+#include "playstate.h"
 
 
 //*** TYPES AND CLASSES
@@ -26,24 +19,16 @@ private:
 	void CleanUp();
 	void Update();
 	void Render();
+	void CheckState();
 	
-	double currentTime;
-	double lastTime;
-	float timeDiff;
+	GameState* currentState;
 	
+	StartupState startupState;
+	MenuState menuState;
+	PlayState playState;
+
 	//  game loop boolean
 	static bool quitting_;
-	
-	Level testLevel;
-	Renderer testRenderer;
-	MobManager testMobs;
-	Gun testGun;
-	
-	
-	Vector2 testDirection;
-	Vector2 testStrafe;
-	Vector2 testPosition;
-	
 	
 };
 

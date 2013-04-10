@@ -1,10 +1,11 @@
 #ifndef __GAMESTATE_H__
 #define __GAMESTATE_H__
 
+
 class GameState
 {
 public:
-	enum StateReturnValue { NONE, STARTUP, MENU, OPTIONS, HELP, GAMEACTIVE, GAMEPAUSED, GAMEWIN, GAMELOSE, QUIT }
+	enum StateReturnValue { NONE, STARTUP, MENU, OPTIONS, HELP, GAMEACTIVE, GAMEPAUSED, GAMEWIN, GAMELOSE, QUIT };
 	GameState(){};
 	virtual ~GameState(){};
 	
