@@ -118,5 +118,5 @@ PS2SpriteT& MenuState::GetOptionOfCursor()
 		}
 		
 		//  Should Never Happen
-		//return PS2SpriteT();
+		return quit;
 }
