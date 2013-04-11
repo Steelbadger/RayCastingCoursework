@@ -24,6 +24,7 @@ public:
 	void RemoveMob(MobData mob);
 	void GetMobData();
 	void ShootMobs(float distToWallAtCursor);
+	void ClearMobs();
 	
 	static bool MobComparator(MobData lhs, MobData rhs);
 private:

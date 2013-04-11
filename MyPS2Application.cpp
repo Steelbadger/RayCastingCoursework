@@ -61,6 +61,7 @@ void MyPS2Application::Init()
 	VIFDynamicDMA.Fire();	
 	menuState.Initialise();
 	playState.Initialise();
+	pauseState.Initialise();
 	currentState = &startupState;
 	
 }
@@ -97,6 +98,7 @@ void MyPS2Application::Render()
 
 void MyPS2Application::CheckState()
 {
+	GameState* oldstate = currentState;
 	switch (currentState->GetReturn()) {
 		case GameState::NONE :			return;
 		case GameState::STARTUP : 		currentState = &startupState;
@@ -107,13 +109,18 @@ void MyPS2Application::CheckState()
 										break;
 		case GameState::HELP : 			currentState = &menuState;
 										break;
+		case GameState::OPTIONSPAUSED : currentState = &menuState;
+										break;
+		case GameState::HELPPAUSED : 	currentState = &menuState;
+										break;										
 		case GameState::GAMEACTIVE :	currentState = &playState;
 										break;
-		case GameState::GAMEPAUSED : 	currentState = &playState;
+		case GameState::GAMEPAUSED : 	currentState = &pauseState;
+										currentState->PriorState(&playState);		
 										break;
-		case GameState::GAMEWIN :		currentState = &menuState;
+		case GameState::GAMEWIN :		currentState = &menuState;		
 										break;
-		case GameState::GAMELOSE : 		currentState = &menuState;
+		case GameState::GAMELOSE : 		currentState = &menuState;	
 										break;
 		case GameState::QUIT :			quitting_ = true;
 										break;

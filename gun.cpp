@@ -15,7 +15,7 @@ void Gun::Init()
 {
 	sprite.SetNumberOfFrames(4);
 	sprite.SetAnimationRate(2);
-	sprite.SetDepth(999);
+	sprite.SetDepth(850);
 	sprite.SetUVs(0,0,64,96);
 	TexManager.LoadTexture(textureFile);
 }

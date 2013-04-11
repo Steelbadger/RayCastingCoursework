@@ -130,6 +130,11 @@ void PS2Sprite::SetColour(int colour)
 	m_b = (colour & 0x0000FF);
 }
 
+void PS2Sprite::SetAlpha(char alpha)
+{
+	m_a = alpha;
+}
+
 void PS2Sprite::Move(void)
 {
 	m_x += m_Vx;
@@ -187,7 +192,7 @@ void PS2Sprite::Render(void) const
 												PRIM_IIP_FLAT, 
 												PRIM_TME_OFF,
 												PRIM_FGE_OFF, 
-												PRIM_ABE_OFF, 
+												PRIM_ABE_ON, 
 												PRIM_AA1_OFF, 
 												PRIM_FST_UV, 
 												PRIM_CTXT_CONTEXT1, 

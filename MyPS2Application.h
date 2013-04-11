@@ -4,6 +4,7 @@
 #include "startupstate.h"
 #include "menustate.h"
 #include "playstate.h"
+#include "pausedstate.h"
 
 
 //*** TYPES AND CLASSES
@@ -26,6 +27,8 @@ private:
 	StartupState startupState;
 	MenuState menuState;
 	PlayState playState;
+	PausedState pauseState;
+	
 
 	//  game loop boolean
 	static bool quitting_;

@@ -16,7 +16,7 @@ void MobManager::DrawMobs()
 		for(i = mobs.begin(); i != mobs.end(); i++) {
 			if (i->onscreen == true) {
 				i->mob.Render();
-				i->onscreen = false;
+//				i->onscreen = false;
 			}
 		}
 	}
@@ -147,7 +147,10 @@ void MobManager::ShootMobs(float distanceToNearestWall)
 	}
 }
 
-
+void MobManager::ClearMobs()
+{
+	mobs.clear();
+}
 
 void MobManager::GetMobData()
 {

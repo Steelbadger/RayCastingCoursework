@@ -45,6 +45,7 @@ public:
 	void UniformScale(float factor);
 	
 	void SetColour(int colour);
+	void SetAlpha(char alpha);
 	
 	void MoveTo(const float x, const float y);
 	

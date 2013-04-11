@@ -24,6 +24,7 @@ void PlayState::Initialise()
 	testRenderer.SetDirection(testDirection);
 	testRenderer.SetFoV(60.0f);
 	testRenderer.InitTextures();
+	testMobs.ClearMobs();
 
 	Mob testMob(Vector2(3.0f, 3.0f), Vector2(1.4f, 1.4f), "testEnemy.bmp", Vector2(0,0), Vector2(64, 64));
 	testMobs.AddMob(testMob);
@@ -71,6 +72,10 @@ void PlayState::Update()
 	if (testLevel.At(testPosition.x, y) == 0) {
 		testPosition.y += translationVector.y;
 	}
+	
+	if (pad[0].pressed & PAD_START) {
+		value = GameState::GAMEPAUSED;
+	}		
 	
 	testRenderer.ConstructDepthMap();	
 	testRenderer.SetPosition(testPosition);

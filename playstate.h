@@ -27,12 +27,10 @@ private:
 	
 	double timer;
 	double timeDif;
-	
-	
+
 	Vector2 testDirection;
 	Vector2 testStrafe;
 	Vector2 testPosition;	
-
 };
 
 #endif
