@@ -18,7 +18,9 @@ HelpState::~HelpState()
 
 void HelpState::Initialise()
 {
-	helpScreen.SetUVs(
+	helpScreen.SetUVs(0,0,256, 256);
+	helpScreen.SetDepth(901);
+	TexManager.LoadTexture(helpImage);	
 }
 
 void HelpState::Update()
