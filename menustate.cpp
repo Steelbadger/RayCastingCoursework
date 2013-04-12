@@ -14,7 +14,8 @@ MenuState::MenuState() :
 	background(0, 0, 640, 512),
 	cursorPos(PLAY),
 	menuImage("menu.bmp"),
-	splashImage("splash.bmp")
+	splashImage("splash.bmp"),
+	GameState(GameState::MENU)	
 {}
 
 MenuState::~MenuState()

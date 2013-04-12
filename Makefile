@@ -28,6 +28,8 @@ OBJS = 	PS2Framework/src/primitives.o \
 		startupstate.o \
 		menustate.o \
 		pausedstate.o \
+		helpstate.o \
+		player.o \
 		texturemanager.o \
 		MyPS2Application.o \
 		main.o

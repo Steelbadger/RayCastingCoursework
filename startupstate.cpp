@@ -10,7 +10,8 @@ StartupState::StartupState() :
 	loadingStart(0, 150, 160, 40),
 	titleText(0, 64, 300, 150),
 	splashImage("splash.bmp"),
-	textImage("loadingstart.bmp")
+	textImage("loadingstart.bmp"),
+	GameState(GameState::STARTUP)
 {
 }
 

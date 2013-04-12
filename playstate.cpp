@@ -2,13 +2,13 @@
 
 #include "PS2Defines.h"
 #include "pad.h"
-#include "dma.h"
 
 #include <time.h>
 #include <iostream>
 
 
-PlayState::PlayState()
+PlayState::PlayState():
+	GameState(GameState::GAMEACTIVE)
 {}
 
 PlayState::~PlayState()
@@ -17,11 +17,10 @@ PlayState::~PlayState()
 
 void PlayState::Initialise()
 {
-	testPosition = Vector2(2.01f, 2.01f);
-	testDirection = Vector2(1.0f, 1.0f);
+	player.Initialise(Vector2(2.1f, 2.1f), Vector2(1.0f, 1.0f), testLevel);
 	testRenderer.SetLevel(&testLevel);
-	testRenderer.SetPosition(testPosition);
-	testRenderer.SetDirection(testDirection);
+	testRenderer.SetPosition(player.GetPosition());
+	testRenderer.SetDirection(player.GetDirection());
 	testRenderer.SetFoV(60.0f);
 	testRenderer.InitTextures();
 	testMobs.ClearMobs();
@@ -34,8 +33,6 @@ void PlayState::Initialise()
 	testMobs.AddMob(testMob);
 	timer = clock();
 	timeDif = clock()-timer;
-	
-	testGun.Init();
 }
 
 void PlayState::Update()
@@ -43,52 +40,34 @@ void PlayState::Update()
 	timeDif = clock() - timer;
 	timer = clock();
 	timeDif /= CLOCKS_PER_SEC;
-	testDirection.Rotate(pad[0].axes[2]*timeDif * 4.0f);
-	testStrafe = testDirection;
-	testStrafe.Rotate(90);
-	
-	Vector2 translationVector = testDirection.Normalise() * (-pad[0].axes[1] * timeDif * 3.0f) + testStrafe.Normalise() * (pad[0].axes[0] * timeDif * 3.0f);
-	int x, y;
-	x = testPosition.x + (translationVector.x) + (translationVector.x/Abs(translationVector.x))*0.2;
-	y = testPosition.y + (translationVector.y) + (translationVector.y/Abs(translationVector.y))*0.2;
-
-	if (pad[0].pressed & PAD_L2) {
-		testMobs.ShootMobs(testRenderer.GetCentreWallDistance());
-		testGun.Fire();
-	}	
 
 	if (pad[0].pressed & PAD_CROSS) {
 		//testRenderer.OutputDepthMap();
-		std::cout << "Position: " << testPosition << std::endl;
-		std::cout << "Movement: (" << x << ", " << y << ")" << std::endl;
 		std::cout << "TimeDiff: " << timeDif << std::endl;
-		std::cout << "Direction: " << testDirection << std::endl;
+		std::cout << "FoV: " << testRenderer.GetFoV() << std::endl;
 	}		
-	
-	if (testLevel.At(x, testPosition.y) == 0) {
-		testPosition.x += translationVector.x;
-	}
-	
-	if (testLevel.At(testPosition.x, y) == 0) {
-		testPosition.y += translationVector.y;
-	}
-	
+
 	if (pad[0].pressed & PAD_START) {
 		value = GameState::GAMEPAUSED;
-	}		
+	}	
+	
+	player.Update(timeDif);
 	
 	testRenderer.ConstructDepthMap();	
-	testRenderer.SetPosition(testPosition);
-	testRenderer.SetDirection(testDirection);	
+	testRenderer.SetPosition(player.GetPosition());
+	testRenderer.SetDirection(player.GetDirection());	
 	testRenderer.BuildScene();
-	testMobs.FindMobPositions(testPosition, testDirection, 60.0f);
-	testGun.Update();
+	testMobs.FindMobPositions(player.GetPosition(), player.GetDirection(), testRenderer.GetFoV());
+	if (player.HasFired()) {
+		testMobs.ShootMobs(testRenderer.GetCentreWallDistance(), player.GetGunMaxDamage());
+	}
+		
 }
 
 void PlayState::Render()
 {
 	testRenderer.DrawScene();
 	testMobs.DrawMobs();
-	testGun.Render();
+	player.Render();
 }
 

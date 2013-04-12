@@ -1,5 +1,7 @@
 #include "level.h"
 #include <iostream>
+#include <fstream>
+#include <iostream>
 
 const unsigned int Level::DEFAULTMAP[MAPWIDTH][MAPHEIGHT] = 	{{	1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 3, 3, 3, 3, 3, 3, 4, 4, 4, 4},
 																{	1, 0, 0, 0, 1, 0, 0, 0, 0, 1, 3, 0, 0, 0, 0, 0, 0, 0, 0, 4},
@@ -54,6 +56,47 @@ void Level::LoadDefault()
 		for (int row = 0; row < MAPWIDTH; row++) {
 			levelMap[column].push_back(DEFAULTMAP[column][row]);
 		}	
+	}
+}
+
+void Level::LoadLevel(std::string levelFile)
+{
+	if (levelFile.empty()) {
+		return;
+	}
+	
+	std::ifstream fileStream(levelFile.c_str(), ifstream::in);	
+	if (!fileStream.is_open()) {
+		std::cout << "Could Not Open Level File: " << levelFile << std::endl;
+		return;
+	}
+	char c;
+	int column = 0;
+	int row = 0;
+	unsigned int wall;
+		
+	while (fileStream.good()) {
+		fileStream.get(c);
+		if (c != 'm') {
+			fileStream.ignore(256, '\n');
+		} else {
+			levelMap.push_back(std::vector <unsigned int> derp);
+			int peek = fileStream.peek();
+			while(peek != '\n') {
+				switch (peek) {
+					case ('P'):	StartPosition = Vector2(row+0.5f, column+0.5f);
+								break;
+					case ('E'):	mobList.push_back(Mob(Vector2(row+0.5f, column+0.5f), Vector2(1.5f, 1.5f), "testEnemy.bmp", Vector2(0,0), Vector2(64, 64));
+								break;
+					case ('C'):	completionConditions.push_back(Vector2(row, column));
+								break;	
+				}
+				fileStream >> wall;
+				levelMap[row].push_back(wall);
+				column++;
+			}
+			row++;
+		}
 	}
 }
 

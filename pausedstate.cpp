@@ -21,7 +21,8 @@ PausedState::PausedState() :
 	pauseImage("pause.bmp"),
 	menuImage("menu.bmp"),
 	background(NULL),
-	darkenOverlay(0,0,640, 512)
+	darkenOverlay(0,0,640, 512),
+	GameState(GameState::GAMEPAUSED)	
 {
 }
 
@@ -49,7 +50,8 @@ void PausedState::Initialise()
 	quitApp.SetDepth(901);
 	
 	darkenOverlay.SetColour(0x000000);
-	darkenOverlay.SetAlpha('w');
+//	darkenOverlay.SetAlpha('w');
+	darkenOverlay.SetAlpha('l');
 	darkenOverlay.SetDepth(900);
 	
 	TexManager.LoadTexture(menuImage);
@@ -62,9 +64,9 @@ void PausedState::Update()
 		switch (cursorPos) {
 			case RETURN: 		value = GameState::GAMEACTIVE;
 								break;
-			case OPTIONS:		value = GameState::OPTIONSPAUSED;
+			case OPTIONS:		value = GameState::OPTIONS;
 								break;
-			case HELP:			value = GameState::HELPPAUSED;
+			case HELP:			value = GameState::HELP;
 								break;
 			case QUITTOMENU:	value = GameState::MENU;
 								if (background != NULL) {

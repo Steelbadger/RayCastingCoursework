@@ -15,10 +15,12 @@ public:
 	void Render();
 	virtual void Fire();
 	void Update();
+	int GetDamage(){return damage;}
 	
 private:
 	AnimatedSprite sprite;
 	std::string textureFile;
+	int damage;
 };
 
 #endif

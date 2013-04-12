@@ -8,6 +8,7 @@
 
 class HelpState : public GameState
 {
+public:
 	HelpState();
 	virtual ~HelpState();
 	

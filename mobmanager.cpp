@@ -118,12 +118,24 @@ void MobManager::AddMob(Mob m)
 	}
 }
 
+void MobManager::LoadMobList(std::vector<Mob> m) 
+{
+	std::vector<Mob>::iterator inputIterator;
+	
+	for (inputIterator = m.begin(); inputIterator != m.end(); inputIterator++) {
+		MobData temp;
+		temp.mob = *inputIterator;
+		temp.onscreen = false;
+		mobs.push_back(temp);
+	}
+}
+
 void MobManager::RemoveMob(MobData m)
 {
 //	mobs.remove(m);
 }
 
-void MobManager::ShootMobs(float distanceToNearestWall)
+void MobManager::ShootMobs(float distanceToNearestWall, int damage)
 {
 	if (!mobs.empty()) {
 		std::list<MobData>::iterator i;
@@ -133,7 +145,7 @@ void MobManager::ShootMobs(float distanceToNearestWall)
 			std::cout << "Distance to Mob: " << (800 - i->mob.GetDistance()) << std::endl;
 			if ((800-(i->mob.GetDistance()))/4 < distanceToNearestWall && i->mob.IsInside(Vector2(0.0f, 0.0f))) {
 				std::cout << "Mob found at Cursor" << std::endl;
-				i->mob.Damage(5);
+				i->mob.Damage(damage);
 				i = mobs.begin();
 			}
 		}

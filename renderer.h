@@ -5,6 +5,8 @@
 #include "raycaster.h"
 #include "primitives.h"
 #include "texture.h"
+ 
+#include "ps2maths.h"
 
 #include <map>
 #include <string>
@@ -18,6 +20,7 @@ public:
 	void DrawScene();
 	void SetLevel(Level* level);
 	void SetFoV(float fov);
+	float GetFoV(){return (FoV*180/PI);}
 	void InitTextures();
 	void BuildScene();
 	

@@ -18,6 +18,7 @@ void Gun::Init()
 	sprite.SetDepth(850);
 	sprite.SetUVs(0,0,64,96);
 	TexManager.LoadTexture(textureFile);
+	damage = 5;
 }
 
 void Gun::Update()

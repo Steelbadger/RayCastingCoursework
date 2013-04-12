@@ -59,9 +59,13 @@ void MyPS2Application::Init()
 	
 	startupState.Initialise();
 	VIFDynamicDMA.Fire();	
+	
+	testLevel.LoadLevel("levelone.level");
+	
 	menuState.Initialise();
 	playState.Initialise();
 	pauseState.Initialise();
+	helpState.Initialise();
 	currentState = &startupState;
 	
 }
@@ -102,27 +106,33 @@ void MyPS2Application::CheckState()
 	switch (currentState->GetReturn()) {
 		case GameState::NONE :			return;
 		case GameState::STARTUP : 		currentState = &startupState;
+//										std::cout << "Enter State: Startup" << std::endl;		
 										break;
 		case GameState::MENU : 			currentState = &menuState;
+//										std::cout << "Enter State: Menu" << std::endl;			
 										break;
 		case GameState::OPTIONS : 		currentState = &menuState;
+										currentState->PriorState(oldstate);	
+//										std::cout << "Enter State: Options" << std::endl;											
 										break;
-		case GameState::HELP : 			currentState = &menuState;
-										break;
-		case GameState::OPTIONSPAUSED : currentState = &menuState;
-										break;
-		case GameState::HELPPAUSED : 	currentState = &menuState;
-										break;										
+		case GameState::HELP : 			currentState = &helpState;
+										currentState->PriorState(oldstate);
+//										std::cout << "Enter State: Help" << std::endl;											
+										break;									
 		case GameState::GAMEACTIVE :	currentState = &playState;
+//										std::cout << "Enter State: GameActive" << std::endl;			
 										break;
 		case GameState::GAMEPAUSED : 	currentState = &pauseState;
-										currentState->PriorState(&playState);		
+										currentState->PriorState(&playState);
+//										std::cout << "Enter State: Paused" << std::endl;											
 										break;
-		case GameState::GAMEWIN :		currentState = &menuState;		
+		case GameState::GAMEWIN :		currentState = &menuState;	
+//										std::cout << "Enter State: Win" << std::endl;			
 										break;
 		case GameState::GAMELOSE : 		currentState = &menuState;	
 										break;
 		case GameState::QUIT :			quitting_ = true;
 										break;
 	}
+	
 }
