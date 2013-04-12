@@ -74,30 +74,48 @@ void Level::LoadLevel(std::string levelFile)
 	int column = 0;
 	int row = 0;
 	unsigned int wall;
+	std::vector<Vector2> mobPositions;
 		
 	while (fileStream.good()) {
 		fileStream.get(c);
-		if (c != 'm') {
+		if (c == '#') {
 			fileStream.ignore(256, '\n');
-		} else {
-			levelMap.push_back(std::vector <unsigned int> derp);
+		} else if (c == EOF) {
+			break;		
+		} else if (c != '\n' ){
+			levelMap.push_back(temp);
 			int peek = fileStream.peek();
-			while(peek != '\n') {
-				switch (peek) {
-					case ('P'):	StartPosition = Vector2(row+0.5f, column+0.5f);
-								break;
-					case ('E'):	mobList.push_back(Mob(Vector2(row+0.5f, column+0.5f), Vector2(1.5f, 1.5f), "testEnemy.bmp", Vector2(0,0), Vector2(64, 64));
-								break;
-					case ('C'):	completionConditions.push_back(Vector2(row, column));
-								break;	
+			while(peek != '\n' && peek != EOF) {
+				wall = 0;
+				if (peek >= '0' && peek <= '9') {
+					fileStream >> wall;
+					column++;
+				} else if (peek == 'S') {
+					StartPosition = Vector2(column + 0.5f, row + 0.5f);
+					column++;
+					fileStream.ignore(1);
+				} else if (peek == 'E') {
+					mobPositions.push_back(Vector2(column + 0.5f, row + 0.5f));
+					column++;
+					fileStream.ignore(1);
+				} else if (peek == 'C') {
+					completionConditions.push_back(Vector2(column + 0.5f, row + 0.5f));
+					column++;
+					fileStream.ignore(1);
+				} else {
+					fileStream.ignore(1);
+					peek = fileStream.peek();
+					continue;
 				}
-				fileStream >> wall;
 				levelMap[row].push_back(wall);
-				column++;
+				peek = fileStream.peek();
 			}
 			row++;
+			column = 0;
 		}
 	}
+	
+	
 }
 
 unsigned int Level::At(int x, int y)
