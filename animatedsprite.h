@@ -2,6 +2,7 @@
 #define __ANIMATEDSPRITE_H__
 
 #include "primitives.h"
+#include "timer.h"
 
 class AnimatedSprite : public PS2SpriteT
 {
@@ -13,7 +14,7 @@ public:
 	AnimatedSprite(const float x, const float y, const float width, const float height, const int frameBase);
 	~AnimatedSprite();
 	void SetNumberOfFrames(int frames){totalFrames = frames;}
-	void SetAnimationRate(int updates);
+	void SetAnimationRate(float delay);
 	bool IsAnimating(){return animating;}
 	void AnimateOnce();
 	void AnimateLoop();
@@ -33,11 +34,12 @@ private:
 	
 	int frame;
 	int baseFrame;
-	int count;
 	bool animating;
 	bool reverse;
 	int totalFrames;
-	int frameDelay;
+	float frameDelay;
+	float delayCount;
+	CTimer timer;
 };
 
 

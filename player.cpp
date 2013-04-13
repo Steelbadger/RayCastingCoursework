@@ -36,7 +36,7 @@ void Player::Update(double timeDif)
 	y = position.y + (translationVector.y) + (translationVector.y/Abs(translationVector.y))*0.2;
 
 	firedWeapon = false;
-	if (pad[0].pressed & PAD_L2) {
+	if ((pad[0].pressed & PAD_L2) && !activeWeapon->IsFiring()) {
 		firedWeapon = true;
 		activeWeapon->Fire();
 	}	

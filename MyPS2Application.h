@@ -7,6 +7,8 @@
 #include "pausedstate.h"
 #include "helpstate.h"
 
+#include "level.h"
+
 
 //*** TYPES AND CLASSES
 class MyPS2Application
@@ -30,9 +32,6 @@ private:
 	PlayState playState;
 	PausedState pauseState;
 	HelpState helpState;
-	
-	testLevel;
-	
 	
 
 	//  game loop boolean

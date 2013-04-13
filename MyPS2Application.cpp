@@ -60,8 +60,6 @@ void MyPS2Application::Init()
 	startupState.Initialise();
 	VIFDynamicDMA.Fire();	
 	
-	testLevel.LoadLevel("levelone.level");
-	
 	menuState.Initialise();
 	playState.Initialise();
 	pauseState.Initialise();

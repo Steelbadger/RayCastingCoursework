@@ -20,6 +20,10 @@ public:
 	void LoadDefault();
 	
 	unsigned int At(int x, int y);
+	bool IsCompletion(int x, int y);
+	bool IsCompletion(Vector2 pos);	
+	Vector2 GetPlayerStartPosition(){return StartPosition;}
+	std::vector<Mob> GetMobs(){return mobList;}
 	
 private:
 	std::vector<std::vector<unsigned int> > levelMap;

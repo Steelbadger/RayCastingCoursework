@@ -16,6 +16,7 @@ public:
 	virtual void Fire();
 	void Update();
 	int GetDamage(){return damage;}
+	bool IsFiring(){return sprite.IsAnimating();}
 	
 private:
 	AnimatedSprite sprite;

@@ -37,9 +37,10 @@ void AnimatedSprite::Update()
 	(this->*CurrentUpdate)();
 }
 
-void AnimatedSprite::SetAnimationRate(int updates)
+void AnimatedSprite::SetAnimationRate(float delay)
 {
-	frameDelay = updates;
+	frameDelay = delay;
+	timer.Initialise();
 }
 
 void AnimatedSprite::AnimateOnce()
@@ -66,7 +67,6 @@ void AnimatedSprite::Initialize()
 	animating = false;
 	frame = 0;
 	baseFrame = 0;
-	count = 0;
 	reverse = false;
 }
 
@@ -77,8 +77,8 @@ void AnimatedSprite::UpdateStatic()
 
 void AnimatedSprite::UpdateAnimateOnce()
 {
-	count++;
-	if (count > frameDelay) {
+	delayCount += timer.GetTimeDeltaSeconds();
+	if (delayCount > frameDelay) {
 		if (frame < totalFrames) {
 			frame++;	
 		} else {
@@ -88,16 +88,15 @@ void AnimatedSprite::UpdateAnimateOnce()
 		}
 		int u = ((frame+baseFrame)*m_tw)%256;
 		int v = ((frame+baseFrame)*m_th)/256;
-		SetUVs(u, v, m_tw, m_th);		
-		count = 0;
+		SetUVs(u, v, m_tw, m_th);
+		delayCount = 0;		
 	}
 }
 
 void AnimatedSprite::UpdateAnimateLoop()
 {
-	count++;
-	
-	if (count < frameDelay) {
+	delayCount += timer.GetTimeDeltaSeconds();
+	if (delayCount > frameDelay) {
 		if (frame < totalFrames) {
 			frame++;	
 		} else {
@@ -106,15 +105,15 @@ void AnimatedSprite::UpdateAnimateLoop()
 		int u = ((frame+baseFrame)*m_tw)%256;
 		int v = ((frame+baseFrame)*m_th)/256;
 		SetUVs(u, v, m_tw, m_th);	
-		count = 0;
+		delayCount = 0;
 	}
 	
 }
 
 void AnimatedSprite::UpdateAnimateCycle()
 {
-	count++;
-	if (count < frameDelay) {	
+	delayCount += timer.GetTimeDeltaSeconds();
+	if (delayCount > frameDelay) {	
 		if (!reverse) {
 			frame++;	
 		} else {
@@ -126,7 +125,7 @@ void AnimatedSprite::UpdateAnimateCycle()
 		int u = ((frame+baseFrame)*m_tw)%256;
 		int v = ((frame+baseFrame)*m_th)/256;
 		SetUVs(u, v, m_tw, m_th);	
-		count = 0;
+		delayCount = 0;
 	}
 }
 

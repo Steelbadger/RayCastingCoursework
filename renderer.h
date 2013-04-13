@@ -34,7 +34,7 @@ public:
 	void UVSnapShot();
 	
 private:
-	static const int RES = 320;
+	static const int RES = 160;
 	static const int NUMTEXTURES = 16;
 
 	float depthMap[RES+1];

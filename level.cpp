@@ -26,7 +26,7 @@ const unsigned int Level::DEFAULTMAP[MAPWIDTH][MAPHEIGHT] = 	{{	1, 1, 1, 1, 1, 1
 																
 Level::Level()
 {
-	LoadDefault();
+//	LoadDefault();
 }
 
 
@@ -70,11 +70,14 @@ void Level::LoadLevel(std::string levelFile)
 		std::cout << "Could Not Open Level File: " << levelFile << std::endl;
 		return;
 	}
+	
+	levelMap.clear();
 	char c;
 	int column = 0;
 	int row = 0;
 	unsigned int wall;
 	std::vector<Vector2> mobPositions;
+	std::vector<unsigned int> temp;
 		
 	while (fileStream.good()) {
 		fileStream.get(c);
@@ -99,7 +102,7 @@ void Level::LoadLevel(std::string levelFile)
 					column++;
 					fileStream.ignore(1);
 				} else if (peek == 'C') {
-					completionConditions.push_back(Vector2(column + 0.5f, row + 0.5f));
+					completionConditions.push_back(Vector2(column, row));
 					column++;
 					fileStream.ignore(1);
 				} else {
@@ -115,6 +118,13 @@ void Level::LoadLevel(std::string levelFile)
 		}
 	}
 	
+	fileStream.close();
+	
+	std::vector<Vector2>::iterator it;
+	
+	for (it = mobPositions.begin(); it != mobPositions.end(); it++) {
+		mobList.push_back(Mob(*it, Vector2(1.6f, 1.6f), "testEnemy.bmp", Vector2(0,0), Vector2(64, 64)));
+	}
 	
 }
 
@@ -126,4 +136,22 @@ unsigned int Level::At(int x, int y)
 	} else {
 		return levelMap[x][y];
 	}
+}
+
+bool Level::IsCompletion(int x, int y)
+{
+	std::vector<Vector2>::iterator it;
+	for (it = completionConditions.begin(); it != completionConditions.end(); it++) {
+		if (int((*it).x) == x && int((*it).y) == y) {
+			return true;
+		}
+	}
+	return false;
+}
+
+bool Level::IsCompletion(Vector2 pos)
+{
+	int x = int(pos.x);
+	int y = int(pos.y);
+	return IsCompletion(x, y);
 }

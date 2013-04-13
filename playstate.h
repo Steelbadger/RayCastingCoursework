@@ -6,6 +6,7 @@
 #include "renderer.h"
 #include "mobmanager.h"
 #include "player.h"
+#include "timer.h"
 
 #include "vector2.h"
 
@@ -24,9 +25,7 @@ private:
 	Renderer testRenderer;
 	MobManager testMobs;
 	Player player;
-	
-	double timer;
-	double timeDif;
+	CTimer timer;
 };
 
 #endif

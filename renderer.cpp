@@ -12,9 +12,9 @@ Vector2 Renderer::textureMap[NUMTEXTURES];
 Renderer::Renderer()
 {
 	for (int i = 0; i < RES; i++) {
-		sprites[i].SetWidth(640/RES);
-		sprites[i].MoveTo(-320.0f + i * (640/RES) + (320/RES), 0.0f);
-		sprites[i].MoveTo(-320.0f + i * (640/RES), 0.0f);		
+		sprites[i].SetWidth(640.0f/RES);
+		sprites[i].MoveTo(-320.0f + i * (640.0f/RES) + (320.0f/RES), 0.0f);
+		sprites[i].MoveTo(-320.0f + i * (640.0f/RES), 0.0f);		
 	}
 	
 	textureFile = "WallSheet8BitIndexed.bmp";
@@ -93,12 +93,14 @@ void Renderer::ConstructDepthMap()
 	float FoVRES = FoV/RES;
 	temp.Rotate(-FoV2);
 	for (int i = 0; i <= RES; i++) {
+//		std::cout << "FirstLoop i: " << i << std::endl;
 		directions[i] = temp;
 		corrections[i] = Cos(-FoV2 + i*FoVRES);
 		temp.Rotate(FoVRES);
 	}
 	RayReturnData ray;	
 	for (int i = 0; i <= RES; i++) {
+//		std::cout << "SecondLoop i: " << i << std::endl;	
 		ray = raycaster.CastRay(position, directions[i], *currentLevel);
 		rayMap[i] = ray;
 		rayMap[i].range = rayMap[i].range * corrections[i];
