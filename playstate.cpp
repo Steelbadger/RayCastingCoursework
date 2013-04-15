@@ -68,7 +68,7 @@ void PlayState::Update()
 	testMobs.UpdateMobs(testLevel, timeDif);
 	
 	int damage = testMobs.CheckMobDealtDamage();
-	if (redAlpha > 0) {
+	if (redAlpha > 5) {
 		redAlpha-=5;
 	}
 	if (damage > 0) {
