@@ -12,16 +12,22 @@ public:
 	virtual ~Gun();
 	virtual void Init();
 	
-	void Render();
+	virtual void Render();
 	virtual void Fire();
-	void Update();
+	virtual void Update();
 	int GetDamage(){return damage;}
 	bool IsFiring(){return sprite.IsAnimating();}
+	bool HasAmmo(){return bool(ammo);}
+	int GetAmmo(){return ammo;}
+	virtual void Reload(){ammo = 12;}
 	
-private:
+	
+protected:
 	AnimatedSprite sprite;
 	std::string textureFile;
+
 	int damage;
+	int ammo;
 };
 
 #endif

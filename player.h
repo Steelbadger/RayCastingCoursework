@@ -2,6 +2,7 @@
 #define __PLAYER_H__
 
 #include "gun.h"
+#include "shotgun.h"
 #include "vector2.h"
 
 class Level;
@@ -24,6 +25,7 @@ public:
 	
 private:
 	Gun pistol;
+	Shotgun shotgun;
 	Gun* activeWeapon;
 	int hitpoints;
 	Vector2 position;

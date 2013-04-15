@@ -18,9 +18,11 @@ public:
 	bool IsAnimating(){return animating;}
 	void AnimateOnce();
 	void AnimateLoop();
+	void AnimateLoop(int loops);
 	void AnimateCycleReverse();
 	void ForceStopAnimation();
 	void Update();
+	void SetBase(int base){baseFrame = base;}
 
 private:
 	void Initialize();
@@ -39,6 +41,7 @@ private:
 	int totalFrames;
 	float frameDelay;
 	float delayCount;
+	int loopsLeft;
 	CTimer timer;
 };
 

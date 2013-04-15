@@ -47,12 +47,21 @@ void AnimatedSprite::AnimateOnce()
 {
 	CurrentUpdate = &AnimatedSprite::UpdateAnimateOnce;
 	animating = true;
+//	std::cout << "Animate Once, StartFrame: " << frame << "\tBaseFrame: " << baseFrame << std::endl;
 }
 
 void AnimatedSprite::AnimateLoop()
 {
 	CurrentUpdate = &AnimatedSprite::UpdateAnimateLoop;
 	animating = true;
+	loopsLeft = -1;
+}
+
+void AnimatedSprite::AnimateLoop(int loops)
+{
+	CurrentUpdate = &AnimatedSprite::UpdateAnimateLoop;
+	animating = true;
+	loopsLeft = loops;
 }
 
 void AnimatedSprite::AnimateCycleReverse()
@@ -79,15 +88,18 @@ void AnimatedSprite::UpdateAnimateOnce()
 {
 	delayCount += timer.GetTimeDeltaSeconds();
 	if (delayCount > frameDelay) {
-		if (frame < totalFrames) {
+		if (frame < (totalFrames-1)) {
 			frame++;	
 		} else {
 			frame = 0;
 			animating = false;
 			CurrentUpdate = &AnimatedSprite::UpdateStatic;
 		}
+
 		int u = ((frame+baseFrame)*m_tw)%256;
 		int v = ((frame+baseFrame)*m_th)/256;
+		
+//		std::cout << "Frame: " << frame << "\tUVs: (" << u << "," << v << ")" << std::endl;		
 		SetUVs(u, v, m_tw, m_th);
 		delayCount = 0;		
 	}
@@ -97,18 +109,25 @@ void AnimatedSprite::UpdateAnimateLoop()
 {
 	delayCount += timer.GetTimeDeltaSeconds();
 	if (delayCount > frameDelay) {
-		if (frame < totalFrames) {
-			frame++;	
-		} else {
-			frame = 0;
-		}
 		int u = ((frame+baseFrame)*m_tw)%256;
 		int v = ((frame+baseFrame)*m_th)/256;
 		SetUVs(u, v, m_tw, m_th);	
 		delayCount = 0;
+		std::cout << "Draw Frame: " << frame << std::endl;
+		if (frame < (totalFrames-1)) {
+			frame++;	
+		} else {
+			frame = 0;
+			loopsLeft--;			
+			if (loopsLeft == 0) {
+				CurrentUpdate = &AnimatedSprite::UpdateStatic;
+				animating = false;
+			}			
+		}		
 	}
 	
 }
+
 
 void AnimatedSprite::UpdateAnimateCycle()
 {

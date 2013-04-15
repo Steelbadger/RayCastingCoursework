@@ -24,11 +24,13 @@ OBJS = 	PS2Framework/src/primitives.o \
 		mobmanager.o \
 		animatedsprite.o \
 		gun.o \
+		shotgun.o \
 		playstate.o \
 		startupstate.o \
 		menustate.o \
 		pausedstate.o \
 		helpstate.o \
+		gamewinstate.o \
 		player.o \
 		timer.o \
 		texturemanager.o \

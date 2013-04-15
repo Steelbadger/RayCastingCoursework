@@ -21,6 +21,7 @@ void Player::Initialise(Vector2 pos, Vector2 dir, Level& lev)
 	level = &lev;
 	
 	pistol.Init();
+	shotgun.Init();
 	activeWeapon = &pistol;
 }
 
@@ -36,9 +37,21 @@ void Player::Update(double timeDif)
 	y = position.y + (translationVector.y) + (translationVector.y/Abs(translationVector.y))*0.2;
 
 	firedWeapon = false;
-	if ((pad[0].pressed & PAD_L2) && !activeWeapon->IsFiring()) {
+	if ((pad[0].pressed & PAD_L2) && !activeWeapon->IsFiring() && activeWeapon->HasAmmo()) {
 		firedWeapon = true;
 		activeWeapon->Fire();
+	}
+	
+	if ((pad[0].pressed & PAD_SQUARE) && activeWeapon != &pistol && !activeWeapon->IsFiring()) {
+		activeWeapon->Reload();
+	}
+	
+	if ((pad[0].pressed & PAD_L1) && !activeWeapon->IsFiring()) {
+		if (activeWeapon == &pistol) {
+			activeWeapon = &shotgun;
+		} else {
+			activeWeapon = &pistol;
+		}
 	}	
 	
 	if (level->At(x, position.y) == 0) {

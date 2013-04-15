@@ -4,8 +4,8 @@
 #include <iostream>
 
 Gun::Gun() :
-	textureFile("gunSheetalt.bmp"),
-	sprite(0, 156, 100, 200, 0)
+	textureFile("gunSheet.bmp"),
+	sprite(0, 181, 150, 150, 0)
 {
 }
 
@@ -16,13 +16,14 @@ Gun::~Gun()
 void Gun::Init()
 {
 	std::cout << "Broken Here?" << std::endl;
-	sprite.SetNumberOfFrames(4);
+	sprite.SetNumberOfFrames(5);
 	sprite.SetAnimationRate(0.1f);
 	sprite.SetDepth(850);
-	sprite.SetUVs(0,0,64,96);
+	sprite.SetUVs(0,0,64,64);
 	TexManager.LoadTexture(textureFile);
 	damage = 20;
 	std::cout << "Nope!" << std::endl;
+	ammo = 12;
 }
 
 void Gun::Update()
@@ -40,4 +41,5 @@ void Gun::Render()
 void Gun::Fire()
 {
 	sprite.AnimateOnce();
+//	ammo--;
 }	

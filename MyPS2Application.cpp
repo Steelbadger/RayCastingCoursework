@@ -57,13 +57,20 @@ void MyPS2Application::Init()
 	// Set up the DMA packet to clear the screen. We want to clear to black.
 	SPS2Manager.InitScreenClear(0, 0, 0);
 	
+	//  Initialise our startup screen (this renders a loading image to the screen)
+	//  Then fire this to the GS to give us something to look at while we load the rest
 	startupState.Initialise();
 	VIFDynamicDMA.Fire();	
 	
+	//  Initialise the rest of the states (sets up depth and UVs for all associated graphics)
+	//  Also loads in level 1 to the playState ready to be played.
 	menuState.Initialise();
 	playState.Initialise();
 	pauseState.Initialise();
 	helpState.Initialise();
+	winState.Initialise();
+	
+	//  And finally set our state machine to startup.
 	currentState = &startupState;
 	
 }
@@ -85,6 +92,7 @@ void MyPS2Application::Update()
 	// Check for exit condition	
 	if((pad[0].buttons & PAD_START)&&(pad[0].buttons & PAD_SELECT)) quitting_ = true;	
 	
+	//  Run the current state, then check for any changes to the state after logic is complete
 	currentState->Update();
 	CheckState();
 
@@ -92,7 +100,7 @@ void MyPS2Application::Update()
 
 void MyPS2Application::Render()
 {
-	// All drawing commands should be between BeginScene and EndScene
+	// Render the active state
 	SPS2Manager.BeginScene();
 	currentState->Render();
 	SPS2Manager.EndScene();			
@@ -109,8 +117,8 @@ void MyPS2Application::CheckState()
 		case GameState::MENU : 			currentState = &menuState;
 //										std::cout << "Enter State: Menu" << std::endl;			
 										break;
-		case GameState::OPTIONS : 		currentState = &menuState;
-										currentState->PriorState(oldstate);	
+		case GameState::OPTIONS : 		//currentState = &menuState;
+										//currentState->PriorState(oldstate);	
 //										std::cout << "Enter State: Options" << std::endl;											
 										break;
 		case GameState::HELP : 			currentState = &helpState;
@@ -124,7 +132,8 @@ void MyPS2Application::CheckState()
 										currentState->PriorState(&playState);
 //										std::cout << "Enter State: Paused" << std::endl;											
 										break;
-		case GameState::GAMEWIN :		currentState = &menuState;	
+		case GameState::GAMEWIN :		currentState = &winState;
+										currentState->PriorState(&playState);
 //										std::cout << "Enter State: Win" << std::endl;			
 										break;
 		case GameState::GAMELOSE : 		currentState = &menuState;	

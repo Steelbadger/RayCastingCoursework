@@ -94,15 +94,15 @@ void Level::LoadLevel(std::string levelFile)
 					fileStream >> wall;
 					column++;
 				} else if (peek == 'S') {
-					StartPosition = Vector2(column + 0.5f, row + 0.5f);
+					StartPosition = Vector2(row + 0.5f, column + 0.5f);
 					column++;
 					fileStream.ignore(1);
 				} else if (peek == 'E') {
-					mobPositions.push_back(Vector2(column + 0.5f, row + 0.5f));
+					mobPositions.push_back(Vector2(row + 0.5f, column + 0.5f));
 					column++;
 					fileStream.ignore(1);
 				} else if (peek == 'C') {
-					completionConditions.push_back(Vector2(column, row));
+					completionConditions.push_back(Vector2(row, column));
 					column++;
 					fileStream.ignore(1);
 				} else {
