@@ -7,6 +7,7 @@
 #include "mobmanager.h"
 #include "player.h"
 #include "timer.h"
+#include "primitives.h"
 
 #include "vector2.h"
 
@@ -22,6 +23,8 @@ public:
 	
 private:
 	Level testLevel;
+	PS2Sprite redOverlay;
+	char redAlpha;
 	Renderer testRenderer;
 	MobManager testMobs;
 	Player player;

@@ -19,6 +19,7 @@ void Player::Initialise(Vector2 pos, Vector2 dir, Level& lev)
 	position = pos;
 	direction = dir;
 	level = &lev;
+	hitpoints = 100;
 	
 	pistol.Init();
 	shotgun.Init();

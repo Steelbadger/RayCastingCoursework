@@ -7,6 +7,7 @@
 #include "pausedstate.h"
 #include "helpstate.h"
 #include "gamewinstate.h"
+#include "gamelosestate.h"
 
 #include "level.h"
 
@@ -34,6 +35,7 @@ private:
 	PausedState pauseState;
 	HelpState helpState;
 	GameWinState winState;
+	GameLoseState loseState;
 	
 
 	//  game loop boolean

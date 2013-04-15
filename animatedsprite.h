@@ -17,10 +17,12 @@ public:
 	void SetAnimationRate(float delay);
 	bool IsAnimating(){return animating;}
 	void AnimateOnce();
+	void AnimateOnceAndStop();
 	void AnimateLoop();
 	void AnimateLoop(int loops);
 	void AnimateCycleReverse();
 	void ForceStopAnimation();
+	void ResetAnimationAndStop();
 	void Update();
 	void SetBase(int base){baseFrame = base;}
 
@@ -31,6 +33,7 @@ private:
 	
 	void UpdateStatic();
 	void UpdateAnimateOnce();
+	void UpdateAnimateOnceAndStop();
 	void UpdateAnimateLoop();
 	void UpdateAnimateCycle();
 	

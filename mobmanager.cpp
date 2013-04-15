@@ -1,5 +1,6 @@
 #include "mobmanager.h"
 #include <iostream>
+#include "texturemanager.h"
 
 MobManager::MobManager()
 {
@@ -34,6 +35,7 @@ void MobManager::FindMobPositions(Vector2 playerPosition, Vector2 playerDirectio
 		
 		for(i = mobs.begin(); i != mobs.end(); i++) {
 			i->onscreen = false;
+			i->mob.SetTarget(playerPosition);			
 			Vector2 a = (i->mob.GetPosition()-playerPosition);
 			float dist = a.LengthSqr();
 			
@@ -114,6 +116,7 @@ void MobManager::AddMob(Mob m)
 		MobData t;
 		t.mob = m;
 		t.onscreen = false;
+		t.dead = false;
 		mobs.push_back(t);
 	}
 }
@@ -121,13 +124,18 @@ void MobManager::AddMob(Mob m)
 void MobManager::LoadMobList(std::vector<Mob> m) 
 {
 	std::vector<Mob>::iterator inputIterator;
+	mobs.clear();
 	
 	for (inputIterator = m.begin(); inputIterator != m.end(); inputIterator++) {
 		MobData temp;
 		temp.mob = *inputIterator;
 		temp.onscreen = false;
+		temp.dead = false;
 		mobs.push_back(temp);
 	}
+	
+	TexManager.LoadTexture("mob1.bmp");
+	TexManager.LoadTexture("mob2.bmp");	
 }
 
 void MobManager::RemoveMob(MobData m)
@@ -135,25 +143,37 @@ void MobManager::RemoveMob(MobData m)
 //	mobs.remove(m);
 }
 
+void MobManager::UpdateMobs(Level& level, double timeDif)
+{
+	if (!mobs.empty()) {
+		std::list<MobData>::iterator i;
+		for(i = mobs.begin(); i != mobs.end(); i++) {
+			i->mob.Update(level, timeDif);
+		}	
+	}
+}
+
 void MobManager::ShootMobs(float distanceToNearestWall, int damage)
 {
 	if (!mobs.empty()) {
 		std::list<MobData>::iterator i;
-		std::cout << "Shooting Mobs" << std::endl;
+		int count = mobs.size();
 		for(i = mobs.end(); i != mobs.begin();) {
-			i--;
-			std::cout << "Distance to Mob: " << (800 - i->mob.GetDistance()) << std::endl;
-			if ((800-(i->mob.GetDistance()))/4 < distanceToNearestWall && i->mob.IsInside(Vector2(0.0f, 0.0f))) {
-				std::cout << "Mob found at Cursor" << std::endl;
+			i--;		
+			if (((800-(i->mob.GetDistance()))/4 < distanceToNearestWall) && (i->mob.IsInside(Vector2(0.0f, 0.0f))) && !(i->mob.IsDead())) {
 				i->mob.Damage(damage);
-				i = mobs.begin();
+				break;
 			}
 		}
+
 		for(i = mobs.begin(); i != mobs.end(); i++) {
-			if (i->mob.IsDead()) {
-				std::cout << "Dead Mob Found" << std::endl;
-				mobs.erase(i);
-				break;
+			if (i->mob.IsDead() && !i->dead) {
+				i->dead = true;
+				if (i->mob.GetHealth() < -15) {
+					i->mob.CatastrophicKill();
+				} else {
+					i->mob.Kill();
+				}
 			}
 		}
 	}
@@ -164,12 +184,20 @@ void MobManager::ClearMobs()
 	mobs.clear();
 }
 
-void MobManager::GetMobData()
-{
-
-}
 
 bool MobManager::MobComparator(MobData lhs, MobData rhs)
 {
 		return rhs.mob.GetDistance() > lhs.mob.GetDistance();
+}
+
+int MobManager::CheckMobDealtDamage()
+{
+	int output = 0;
+	if (!mobs.empty()) {
+		std::list<MobData>::iterator i;
+		for (i = mobs.begin(); i != mobs.end(); i++) {
+			output += i->mob.GetDamageDealt();
+		}
+	}
+	return output;
 }

@@ -31,6 +31,7 @@ OBJS = 	PS2Framework/src/primitives.o \
 		pausedstate.o \
 		helpstate.o \
 		gamewinstate.o \
+		gamelosestate.o \
 		player.o \
 		timer.o \
 		texturemanager.o \

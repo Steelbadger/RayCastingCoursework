@@ -28,14 +28,14 @@ void Shotgun::Init()
 	reloadSprite.SetUVs(0,0,128,128);
 	TexManager.LoadTexture(reloadImage);
 	
-	damage = 60;
+	damage = 80;
 	ammo = MAXAMMO;
 }
 
 void Shotgun::Render()
 {
 	if (reloadSprite.IsAnimating()) {
-		std::cout << "Reload Sprite to Draw" << std::endl;
+//		std::cout << "Reload Sprite to Draw" << std::endl;
 		TexManager.UploadTextureToBuffer(reloadImage, TextureManager::BUFFER2);
 		TexManager.SetTexture(reloadImage);	
 		reloadSprite.Render();

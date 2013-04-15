@@ -72,6 +72,8 @@ void Level::LoadLevel(std::string levelFile)
 	}
 	
 	levelMap.clear();
+	mobList.clear();
+	completionConditions.clear();
 	char c;
 	int column = 0;
 	int row = 0;
@@ -123,7 +125,7 @@ void Level::LoadLevel(std::string levelFile)
 	std::vector<Vector2>::iterator it;
 	
 	for (it = mobPositions.begin(); it != mobPositions.end(); it++) {
-		mobList.push_back(Mob(*it, Vector2(1.6f, 1.6f), "testEnemy.bmp", Vector2(0,0), Vector2(64, 64)));
+		mobList.push_back(Mob(*it));
 	}
 	
 }

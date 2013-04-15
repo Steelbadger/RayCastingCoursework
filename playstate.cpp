@@ -8,7 +8,8 @@
 
 
 PlayState::PlayState():
-	GameState(GameState::GAMEACTIVE)
+	GameState(GameState::GAMEACTIVE),
+	redOverlay(0,0,640, 512)	
 {}
 
 PlayState::~PlayState()
@@ -28,6 +29,10 @@ void PlayState::Initialise()
 	testMobs.ClearMobs();
 	testMobs.LoadMobList(testLevel.GetMobs());
 	timer.Initialise();
+	redAlpha = 0x00;
+	redOverlay.SetColour(0xFF0000);
+	redOverlay.SetAlpha(redAlpha);
+	redOverlay.SetDepth(900);		
 }
 
 void PlayState::Update()
@@ -60,8 +65,23 @@ void PlayState::Update()
 		testMobs.ShootMobs(testRenderer.GetCentreWallDistance(), player.GetGunMaxDamage());
 	}
 	
+	testMobs.UpdateMobs(testLevel, timeDif);
+	
+	int damage = testMobs.CheckMobDealtDamage();
+	if (redAlpha > 0) {
+		redAlpha-=5;
+	}
+	if (damage > 0) {
+		player.Damage(damage);
+		redAlpha = 'a';
+	}
+	redOverlay.SetAlpha(redAlpha);
+	
 	if (testLevel.IsCompletion(player.GetPosition())) {
 		value = GameState::GAMEWIN;
+	}
+	if (player.IsDead()) {
+		value = GameState::GAMELOSE;
 	}
 
 }
@@ -71,5 +91,6 @@ void PlayState::Render()
 	testRenderer.DrawScene();
 	testMobs.DrawMobs();
 	player.Render();
+	redOverlay.Render();
 }
 

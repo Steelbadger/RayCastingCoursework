@@ -1,4 +1,4 @@
-#include "gamewinstate.h"
+#include "gamelosestate.h"
 
 #include "texturemanager.h"
 
@@ -6,34 +6,32 @@
 #include "pad.h"
 #include "dma.h"
 
-GameWinState::GameWinState():
-	youWin(0, -128, 300, 150), 
+GameLoseState::GameLoseState():
+	youLose(0, -128, 300, 150), 
 	returnSprite(0, 128, 160, 80),
-	winImage("winImage.bmp"),
+	loseImage("loseImage.bmp"),
 	darkenOverlay(0,0,640, 512),
-	GameState(GameState::GAMEWIN)
+	GameState(GameState::GAMELOSE)
 {}
 
-GameWinState::~GameWinState()
+GameLoseState::~GameLoseState()
 {}
 
-void GameWinState::Initialise()
+void GameLoseState::Initialise()
 {
-	youWin.SetUVs(0,0,256, 128);
-	youWin.SetDepth(901);
-	TexManager.LoadTexture(winImage);
+	youLose.SetUVs(0,0,256, 128);
+	youLose.SetDepth(901);
+	TexManager.LoadTexture(loseImage);
 	
 	returnSprite.SetUVs(0,128,256, 128);
 	returnSprite.SetDepth(901);
-	TexManager.LoadTexture(winImage);	
 	
 	darkenOverlay.SetColour(0x000000);
-//	darkenOverlay.SetAlpha('w');
 	darkenOverlay.SetAlpha('l');
 	darkenOverlay.SetDepth(900);	
 }
 
-void GameWinState::Update()
+void GameLoseState::Update()
 {
 	if (pad[0].pressed & PAD_START) {
 		value = GameState::MENU;
@@ -43,21 +41,21 @@ void GameWinState::Update()
 	}
 }
 
-void GameWinState::Render()
+void GameLoseState::Render()
 {
 	if (priorState != NULL) {
 		priorState->Render();
 	}
-	TexManager.UploadTextureToBuffer(winImage, TextureManager::BUFFER1);	
+	TexManager.UploadTextureToBuffer(loseImage, TextureManager::BUFFER1);	
 	darkenOverlay.Render();
 	
-	TexManager.SetTexture(winImage);
+	TexManager.SetTexture(loseImage);
 	
-	youWin.Render();
+	youLose.Render();
 	returnSprite.Render();
 }
 
-void GameWinState::PriorState(GameState* prior)
+void GameLoseState::PriorState(GameState* prior)
 {
 	priorState = prior;
 }

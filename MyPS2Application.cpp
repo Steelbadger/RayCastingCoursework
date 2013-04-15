@@ -69,6 +69,7 @@ void MyPS2Application::Init()
 	pauseState.Initialise();
 	helpState.Initialise();
 	winState.Initialise();
+	loseState.Initialise();
 	
 	//  And finally set our state machine to startup.
 	currentState = &startupState;
@@ -136,7 +137,8 @@ void MyPS2Application::CheckState()
 										currentState->PriorState(&playState);
 //										std::cout << "Enter State: Win" << std::endl;			
 										break;
-		case GameState::GAMELOSE : 		currentState = &menuState;	
+		case GameState::GAMELOSE : 		currentState = &loseState;
+										currentState->PriorState(&playState);		
 										break;
 		case GameState::QUIT :			quitting_ = true;
 										break;
