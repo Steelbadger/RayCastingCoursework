@@ -268,7 +268,7 @@ void CTexture::Select(uint64 Tex0 = 0)
 	VIFDynamicDMA.StartAD();
 	VIFDynamicDMA.AddAD(0, TEXFLUSH);
 	VIFDynamicDMA.AddAD(ALPHA_SET(0, 1, 0, 1, 128), ALPHA_1);
-	VIFDynamicDMA.AddAD(TEX1_SET(1, 0, 1, 1, 0, 0, 0), TEX1_1);
+	VIFDynamicDMA.AddAD(TEX1_SET(1, 0, 0, 0, 0, 0, 0), TEX1_1);
 
 	// If the user passed their own TEX0 value, use it.
 	// Otherwise just use the default.

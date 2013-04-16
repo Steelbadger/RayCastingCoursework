@@ -16,7 +16,9 @@ Mob::Mob(Vector2 pos):
 	megaKillTex("mob2.bmp"),
 	height(1.6f),
 	sprite(0.0f, 0.0f, 1.6f*256.0f, 1.6f*256.0f),
-	health(50)
+	baseHealth(50),	
+	health(baseHealth),
+	baseDamage(10)
 {
 	sprite.SetUVs(0, 0, 64, 64);
 	sprite.SetBase(0);
@@ -106,6 +108,7 @@ void Mob::Render()
 void Mob::Update(Level& level, double timeDif)
 {
 	sprite.Update();
+	level.ClearMobAt(position.x, position.y);	
 	damageDealt = 0;
 	if (!IsDead()) {
 		float distSqr = Vector2(position-target).LengthSqr();
@@ -114,7 +117,7 @@ void Mob::Update(Level& level, double timeDif)
 		} else if (!sprite.IsAnimating()) {
 			attacking = false;
 			if (wasAttacking && !attacking) {
-				damageDealt = 10;
+				damageDealt = baseDamage;
 			} 
 			AnimateWalk();		
 		}
@@ -135,13 +138,14 @@ void Mob::WalkToTarget(Level& level, double timeDif)
 	x = position.x + (translationVector.x) + (translationVector.x/Abs(translationVector.x))*0.2;
 	y = position.y + (translationVector.y) + (translationVector.y/Abs(translationVector.y))*0.2;			
 	
-	if (level.At(x, position.y) == 0) {
+	if (level.MobCheckAt(x, position.y) == 0) {
 		position.x += translationVector.x;
 	}
 	
-	if (level.At(position.x, y) == 0) {
+	if (level.MobCheckAt(position.x, y) == 0) {
 		position.y += translationVector.y;
-	}	
+	}
+	level.MobAt(position.x, position.y);
 }
 
 
@@ -166,4 +170,10 @@ bool Mob::IsInside(Vector2 point)
 void Mob::Damage(int dmg)
 {
 	health -= dmg;
+}
+
+void Mob::SetHitpoints(int hp)
+{
+	health = (health/baseHealth)*hp;
+	baseHealth = hp;
 }

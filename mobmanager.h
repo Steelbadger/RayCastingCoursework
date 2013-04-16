@@ -29,6 +29,8 @@ public:
 	void LoadMobList(std::vector<Mob> mobs);
 	void RemoveMob(MobData mob);
 	void ShootMobs(float distToWallAtCursor, int damage);
+	void SetMobHitpoints(int hp);
+	void SetMobDamage(int damage);
 	int CheckMobDealtDamage();
 	void ClearMobs();
 	

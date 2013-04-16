@@ -135,9 +135,34 @@ unsigned int Level::At(int x, int y)
 	if (x >= levelMap.size() || x < 0 || y >= levelMap[0].size() || y < 0) {
 //		cout << "x: " << x << "\tMapSize: " << levelMap.size() << "\ty: " << y << "\tMapSize: " << levelMap[0].size() << std::endl;
 		return 1;
+	} else if (levelMap[x][y] == 20){
+//		std::cout << "There's a Mob here AMAGAD" << std::endl;
+		return 0;
 	} else {
 		return levelMap[x][y];
 	}
+}
+
+unsigned int Level::MobCheckAt(int x, int y)
+{
+	if (x >= levelMap.size() || x < 0 || y >= levelMap[0].size() || y < 0) {
+//		cout << "x: " << x << "\tMapSize: " << levelMap.size() << "\ty: " << y << "\tMapSize: " << levelMap[0].size() << std::endl;
+		return 1;
+	} else if (levelMap[x][y] == 20){
+		return 1;
+	} else {
+		return levelMap[x][y];
+	}
+}
+
+void Level::MobAt(int x, int y)
+{
+	levelMap[x][y] = 20;
+}
+
+void Level::ClearMobAt(int x, int y)
+{
+	levelMap[x][y] = 0;
 }
 
 bool Level::IsCompletion(int x, int y)

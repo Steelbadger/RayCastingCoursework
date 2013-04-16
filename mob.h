@@ -42,11 +42,14 @@ public:
 	void AnimateWalk();
 	int GetDamageDealt(){return damageDealt;}
 	void WalkToTarget(Level& level, double timeDif);
+	void SetDamage(int dmg){baseDamage = dmg;}
+	void SetHitpoints(int hp);
 
 private:
 	Vector2 position;
 	Vector2 target;
 	float height;
+	int baseHealth;	
 	int health;
 	AnimatedSprite sprite;
 	std::string currentTex;
@@ -57,6 +60,8 @@ private:
 	bool attacking;
 	bool wasAttacking;
 	int damageDealt;
+	int baseDamage;
+
 };
 
 

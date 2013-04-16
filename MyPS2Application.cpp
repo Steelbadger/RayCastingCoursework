@@ -8,8 +8,7 @@
 #include "sps2wrap.h"
 #include "dma.h"
 #include <time.h>
-
-#define NUMSPRITES	(100)
+#include "audiomanager.h"
 
 bool MyPS2Application::quitting_ = false;
 
@@ -56,6 +55,7 @@ void MyPS2Application::Init()
 
 	// Set up the DMA packet to clear the screen. We want to clear to black.
 	SPS2Manager.InitScreenClear(0, 0, 0);
+	Audio.Initialise();
 	
 	//  Initialise our startup screen (this renders a loading image to the screen)
 	//  Then fire this to the GS to give us something to look at while we load the rest
@@ -70,6 +70,7 @@ void MyPS2Application::Init()
 	helpState.Initialise();
 	winState.Initialise();
 	loseState.Initialise();
+	optionsState.Initialise();
 	
 	//  And finally set our state machine to startup.
 	currentState = &startupState;
@@ -95,6 +96,7 @@ void MyPS2Application::Update()
 	
 	//  Run the current state, then check for any changes to the state after logic is complete
 	currentState->Update();
+	Audio.Update();
 	CheckState();
 
 }
@@ -118,8 +120,8 @@ void MyPS2Application::CheckState()
 		case GameState::MENU : 			currentState = &menuState;
 //										std::cout << "Enter State: Menu" << std::endl;			
 										break;
-		case GameState::OPTIONS : 		//currentState = &menuState;
-										//currentState->PriorState(oldstate);	
+		case GameState::OPTIONS : 		currentState = &optionsState;
+										currentState->PriorState(oldstate);	
 //										std::cout << "Enter State: Options" << std::endl;											
 										break;
 		case GameState::HELP : 			currentState = &helpState;
@@ -127,7 +129,9 @@ void MyPS2Application::CheckState()
 //										std::cout << "Enter State: Help" << std::endl;											
 										break;									
 		case GameState::GAMEACTIVE :	currentState = &playState;
-//										std::cout << "Enter State: GameActive" << std::endl;			
+//										std::cout << "Enter State: GameActive" << std::endl;
+										playState.StartPlayMusic();
+										playState.PassOptions(optionsState.GetOptions());
 										break;
 		case GameState::GAMEPAUSED : 	currentState = &pauseState;
 										currentState->PriorState(&playState);

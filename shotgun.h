@@ -17,11 +17,13 @@ public:
 	virtual void Render();
 	virtual void Fire();
 	virtual void Reload();
+	virtual bool IsFiring(){return (sprite.IsAnimating() || reloadSprite.IsAnimating());}
 	
 private:
 	AnimatedSprite reloadSprite;
 	std::string reloadImage;
 	static const int MAXAMMO = 4;
+	std::string shotSound;
 };
 
 #endif

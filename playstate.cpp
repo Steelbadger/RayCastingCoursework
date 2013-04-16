@@ -2,6 +2,7 @@
 
 #include "PS2Defines.h"
 #include "pad.h"
+#include "audiomanager.h"
 
 #include <time.h>
 #include <iostream>
@@ -9,7 +10,8 @@
 
 PlayState::PlayState():
 	GameState(GameState::GAMEACTIVE),
-	redOverlay(0,0,640, 512)	
+	redOverlay(0,0,640, 512),
+	ambientMusic("Ambience")
 {}
 
 PlayState::~PlayState()
@@ -32,12 +34,16 @@ void PlayState::Initialise()
 	redAlpha = 0x00;
 	redOverlay.SetColour(0xFF0000);
 	redOverlay.SetAlpha(redAlpha);
-	redOverlay.SetDepth(900);		
+	redOverlay.SetDepth(900);
+	Audio.Load(ambientMusic, AudioManager::DSP0);
 }
 
 void PlayState::Update()
 {
 	float timeDif = timer.GetTimeDeltaSeconds();
+	if (timeDif > 1.0f) {
+		timeDif = 0.0f;
+	}
 	
 	if (pad[0].pressed & PAD_CROSS) {
 		//testRenderer.OutputDepthMap();
@@ -48,6 +54,7 @@ void PlayState::Update()
 
 	if (pad[0].pressed & PAD_START) {
 		value = GameState::GAMEPAUSED;
+		EndMusic();
 	}	
 //		std::cout << "PlayerUpdate Begin" << std::endl;
 	player.Update(timeDif);
@@ -79,9 +86,11 @@ void PlayState::Update()
 	
 	if (testLevel.IsCompletion(player.GetPosition())) {
 		value = GameState::GAMEWIN;
+		EndMusic();
 	}
 	if (player.IsDead()) {
 		value = GameState::GAMELOSE;
+		EndMusic();
 	}
 
 }
@@ -93,4 +102,31 @@ void PlayState::Render()
 	player.Render();
 	redOverlay.Render();
 }
+
+void PlayState::StartPlayMusic()
+{
+	Audio.PlayLoop(ambientMusic);
+}
+
+void PlayState::EndMusic()
+{
+	Audio.Stop(ambientMusic);
+}
+
+void PlayState::PassOptions(Options options)
+{
+	float sens = float(options.sensitivity)*2.0f + 2.0f;
+	player.SetSensitivity(sens);
+	
+	if (options.rumble == RUMBLEON) {
+		player.EnableRumble();
+	} else {
+		player.DisableRumble();
+	}
+	
+	int hp = int(options.difficulty)*20 + 30;
+	int dmg = int(options.difficulty)*5 + 10;
+}
+
+
 

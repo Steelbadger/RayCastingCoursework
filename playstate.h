@@ -8,8 +8,11 @@
 #include "player.h"
 #include "timer.h"
 #include "primitives.h"
+#include "options.h"
+
 
 #include "vector2.h"
+#include <string>
 
 class PlayState : public GameState
 {
@@ -20,6 +23,9 @@ public:
 	virtual void Initialise();
 	virtual void Update();
 	virtual void Render();
+	void PassOptions(Options opt);
+	void StartPlayMusic();
+	void EndMusic();
 	
 private:
 	Level testLevel;
@@ -29,6 +35,7 @@ private:
 	MobManager testMobs;
 	Player player;
 	CTimer timer;
+	std::string ambientMusic;
 };
 
 #endif

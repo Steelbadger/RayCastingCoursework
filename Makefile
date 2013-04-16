@@ -32,8 +32,12 @@ OBJS = 	PS2Framework/src/primitives.o \
 		helpstate.o \
 		gamewinstate.o \
 		gamelosestate.o \
+		optionsstate.o \
+		options.o \
 		player.o \
 		timer.o \
+		audio.o \
+		audiomanager.o \
 		texturemanager.o \
 		MyPS2Application.o \
 		main.o

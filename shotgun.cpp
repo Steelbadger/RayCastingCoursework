@@ -1,6 +1,7 @@
 #include "shotgun.h"
 
 #include "texturemanager.h"
+#include "audiomanager.h"
 
 
 Shotgun::Shotgun()
@@ -9,6 +10,7 @@ Shotgun::Shotgun()
 	sprite = AnimatedSprite(0, 106, 150, 300, 0);
 	reloadImage = "shotgunReload.bmp";
 	reloadSprite = AnimatedSprite(0, 106, 300, 300, 0);
+	shotSound = "shotgun";
 }
 
 Shotgun::~Shotgun()
@@ -30,6 +32,8 @@ void Shotgun::Init()
 	
 	damage = 80;
 	ammo = MAXAMMO;
+	
+	Audio.Load(shotSound, AudioManager::DSP1);
 }
 
 void Shotgun::Render()
@@ -58,7 +62,9 @@ void Shotgun::Update()
 
 void Shotgun::Fire()
 {
+	Audio.Reset(shotSound);
 	sprite.AnimateOnce();
+	Audio.Play(shotSound);
 	ammo--;
 }
 

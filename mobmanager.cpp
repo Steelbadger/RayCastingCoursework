@@ -201,3 +201,23 @@ int MobManager::CheckMobDealtDamage()
 	}
 	return output;
 }
+
+void MobManager::SetMobHealth(int hp)
+{
+	if (!mobs.empty()) {
+		std::list<MobData>::iterator i;
+		for(i = mobs.begin(); i != mobs.end(); i++) {
+			i->mob.SetHitpoints(hp);
+		}	
+	}
+}
+
+void MobManager::SetMobDamage(int damage)
+{
+	if (!mobs.empty()) {
+		std::list<MobData>::iterator i;
+		for(i = mobs.begin(); i != mobs.end(); i++) {
+			i->mob.SetDamage(damage);
+		}	
+	}
+}

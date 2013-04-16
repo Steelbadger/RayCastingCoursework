@@ -8,6 +8,7 @@
 #include "helpstate.h"
 #include "gamewinstate.h"
 #include "gamelosestate.h"
+#include "optionsstate.h"
 
 #include "level.h"
 
@@ -36,6 +37,7 @@ private:
 	HelpState helpState;
 	GameWinState winState;
 	GameLoseState loseState;
+	OptionsState optionsState;
 	
 
 	//  game loop boolean

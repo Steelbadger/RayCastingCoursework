@@ -16,7 +16,7 @@ public:
 	virtual void Fire();
 	virtual void Update();
 	int GetDamage(){return damage;}
-	bool IsFiring(){return sprite.IsAnimating();}
+	virtual bool IsFiring(){return sprite.IsAnimating();}
 	bool HasAmmo(){return bool(ammo);}
 	int GetAmmo(){return ammo;}
 	virtual void Reload(){ammo = 12;}
@@ -25,6 +25,7 @@ public:
 protected:
 	AnimatedSprite sprite;
 	std::string textureFile;
+	std::string shotSound;
 
 	int damage;
 	int ammo;

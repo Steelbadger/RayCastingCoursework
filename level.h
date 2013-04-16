@@ -20,6 +20,9 @@ public:
 	void LoadDefault();
 	
 	unsigned int At(int x, int y);
+	unsigned int MobCheckAt(int x, int y);
+	void MobAt(int x, int y);
+	void ClearMobAt(int x, int y);
 	bool IsCompletion(int x, int y);
 	bool IsCompletion(Vector2 pos);	
 	Vector2 GetPlayerStartPosition(){return StartPosition;}
