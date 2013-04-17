@@ -1,14 +1,17 @@
 #include "optionsstate.h"
 
+#include "texturemanager.h"
+#include "pad.h"
+
 
 OptionsState::OptionsState():
 	optionsTitle(0, -128, 300, 150),
-	difficulty(-64, 32, 128, 32),
-	diffOpt(64, 32, 128, 32),
-	rumble(-64, 64, 128, 32),
-	rumbleOpt(64, 64, 128, 32),
-	sensitivity(-64, 96, 640, 512),
-	sensOpt(64, 96, 640, 512),
+	difficulty(-80, 32, 128, 32),
+	diffOpt(80, 32, 128, 32),
+	rumble(-80, 64, 128, 32),
+	rumbleOpt(80, 64, 128, 32),
+	sensitivity(-80, 96, 128, 32),
+	sensOpt(80, 96, 128, 32),
 	back(0, 170, 128, 32),
 	reset(0, 128, 128, 32),
 	cursorPos(DIFFICULTY),
@@ -32,7 +35,7 @@ void OptionsState::Initialise()
 {
 	originalOptions.difficulty = Options::EASY;
 	originalOptions.rumble = Options::RUMBLEOFF;
-	originalOptions.sensitivity = Options::LOW;
+	originalOptions.sensitivity = Options::MED;
 	
 	currentOptions = originalOptions;
 	
@@ -42,7 +45,7 @@ void OptionsState::Initialise()
 	difficulty.SetUVs(0,128,256,64);
 	difficulty.SetDepth(901);
 	
-	diffOpt.SetUVs(0,64,256,64);
+	diffOpt.SetUVs(0,0,256,64);
 	diffOpt.SetDepth(901);
 	
 	rumble.SetUVs(0,128,256,64);
@@ -51,16 +54,16 @@ void OptionsState::Initialise()
 	rumbleOpt.SetUVs(0,0,256,64);
 	rumbleOpt.SetDepth(901);	
 	
-	sensitivity.SetUVs(0, 160, 256, 64);
+	sensitivity.SetUVs(0, 192, 256, 64);
 	sensitivity.SetDepth(901);
 
-	sensOpt.SetUVs(0, 0, 256, 64);
+	sensOpt.SetUVs(0, 64, 256, 64);
 	sensOpt.SetDepth(901);
 	
-	back.SetUVs(0, 0, 256, 64);
+	back.SetUVs(0, 192, 256, 64);
 	back.SetDepth(901);	
 	
-	reset.SetUVs(0, 160, 256, 64);
+	reset.SetUVs(0, 192, 256, 64);
 	reset.SetDepth(901);		
 	
 	darkenOverlay.SetColour(0x000000);
@@ -86,7 +89,9 @@ void OptionsState::Update()
 void OptionsState::Render()
 {
 	if (background != NULL) {
-		background->Render();
+		if (background->GetState() == GameState::GAMEACTIVE) {
+			background->Render();
+		}
 	}
 	darkenOverlay.Render();
 	
@@ -98,19 +103,19 @@ void OptionsState::Render()
 	difficulty.Render();
 	back.Render();
 	
-	TexManager.UploadTextureToBuffer(rumbleImg, TextureManager::BUFFER1);
-	TextureManager.SetTexture(difficultyImg);
+	TexManager.UploadTextureToBuffer(rumbleImg, TextureManager::BUFFER2);
+	TexManager.SetTexture(difficultyImg);
 	
 	diffOpt.Render();
 	
-	TexManager.UploadTextureToBuffer(sensImg, TextureManager::BUFFER2);
-	TextureManager.SetTexture(rumbleImg);
+	TexManager.UploadTextureToBuffer(sensitivityImg, TextureManager::BUFFER1);
+	TexManager.SetTexture(rumbleImg);
 	
 	rumbleOpt.Render();
 	rumble.Render();
 	reset.Render();
 	
-	TexManager.SetTexture(sensImg);
+	TexManager.SetTexture(sensitivityImg);
 	
 	sensitivity.Render();
 	sensOpt.Render();
@@ -118,7 +123,12 @@ void OptionsState::Render()
 
 void OptionsState::PriorState(GameState* prior)
 {
-	priorState = prior;
+	background = prior;
+	if (background->GetState() == GameState::GAMEACTIVE) {
+		darkenOverlay.SetAlpha('l');
+	} else {
+		darkenOverlay.SetAlpha(0xFF);
+	}
 }
 
 Options OptionsState::GetOptions()
@@ -132,17 +142,17 @@ PS2SpriteT& OptionsState::GetOptionOfCursor()
 		case DIFFICULTY: 	return difficulty;
 		case RUMBLE:		return rumble;
 		case SENSITIVITY:	return sensitivity;
-		case RETURN:		return returnToPrior;
+		case RETURN:		return back;
 		case RESET:			return reset;
 	}
 	
 	//  Should Never Happen
-	return returnToPrior;
+	return back;
 }
 
 void OptionsState::SetDifficultyOptionSprite()
 {
-	int offs = int(currentOptions.rumble);
+	int offs = int(currentOptions.difficulty);
 	diffOpt.SetUVs(0, 64*offs, 256, 64);
 }
 
@@ -158,28 +168,40 @@ void OptionsState::SetSensitivityOptionSprite()
 	sensOpt.SetUVs(0, 64*offs, 256, 64);
 }
 
-void MenuSprite::CheckInput()
+void OptionsState::CheckInput()
 {
 	if (pad[0].pressed & PAD_CROSS) {
 		switch (cursorPos) {
-			case DIFFICULTY: 	currentOptions.difficulty = OptionsSelect(int(currentOptions.difficulty)+1);
+			case DIFFICULTY: 	currentOptions.difficulty = Options::Difficulty(int(currentOptions.difficulty)+1);
 								break;
-			case RUMBLE:		currentOptions.rumble = OptionsSelect(int(currentOptions.rumble)+1);
+			case RUMBLE:		currentOptions.rumble = Options::Rumble(int(currentOptions.rumble)+1);
 								break;
-			case SENSITIVITY:	currentOptions.sensitivity = OptionsSelect(int(currentOptions.sensitivity)+1);
+			case SENSITIVITY:	currentOptions.sensitivity = Options::Sensitivity(int(currentOptions.sensitivity)+1);
 								break;
 			case RESET:			currentOptions = originalOptions;
 								break;
-			case RETURN:		value = priorState->GetState();
+			case RETURN:		value = background->GetState();
+								if (value == GameState::GAMEACTIVE) {
+									value = GameState::GAMEPAUSED;
+								}
 								SaveOptions();
 								break;
 		}
 	}
+	
+	if (pad[0].pressed & PAD_CIRCLE) {
+		currentOptions = originalOptions;	
+		value = background->GetState();
+		if (value == GameState::GAMEACTIVE) {
+			value = GameState::GAMEPAUSED;
+		}		
+	}
+	
 	if (pad[0].axes[1] == 0 && pad[0].axes[0] == 0) {
 		analogueDelay = 10;
 	}
-	int optionOffset;
-	optionOffset = 0;
+	int optionsOffset;
+	optionsOffset = 0;
 	if (pad[0].axes[0] < 0) {
 		analogueDelay -= pad[0].axes[0];
 		if (analogueDelay > 10) {
@@ -206,21 +228,22 @@ void MenuSprite::CheckInput()
 	int tempOption;
 	
 	switch (cursorPos) {
-		case DIFFICULTY: 	tempOption = int(currentOptions.difficulty) + optionOffset;
+		case DIFFICULTY: 	tempOption = int(currentOptions.difficulty) + optionsOffset;
 							tempOption = (tempOption > 3 ? 3 : tempOption%4);
 							tempOption = (tempOption < 0 ? 0 : tempOption%4);
 							currentOptions.difficulty = Options::Difficulty(tempOption);
 							break;
-		case RUMBLE:		tempOption = int(currentOptions.rumble) + optionOffset;
+		case RUMBLE:		tempOption = int(currentOptions.rumble) + optionsOffset;
 							tempOption = (tempOption > 1 ? 1 : tempOption%2);
 							tempOption = (tempOption < 0 ? 0 : tempOption%2);
-							currentOptions.rumble = Options::Difficulty(tempOption);
+							currentOptions.rumble = Options::Rumble(tempOption);
 							break;
-		case SENSITIVITY:	tempOption = int(currentOptions.sensitivity) + optionOffset;
+		case SENSITIVITY:	tempOption = int(currentOptions.sensitivity) + optionsOffset;
 							tempOption = (tempOption > 2 ? 2 : tempOption%3);
 							tempOption = (tempOption < 0 ? 0 : tempOption%3);
-							currentOptions.sensitivity = Options::Difficulty(tempOption);		
+							currentOptions.sensitivity = Options::Sensitivity(tempOption);		
 							break;
+		default:			break;
 	}	
 	
 	
@@ -254,7 +277,7 @@ void MenuSprite::CheckInput()
 		}
 	}
 
-	cursorTemp = (cursorTemp > 3 ? 3 : cursorTemp);
+	cursorTemp = (cursorTemp > 4 ? 4 : cursorTemp);
 	cursorTemp = (cursorTemp < 0 ? 0 : cursorTemp);
 	cursorPos = OptionSelect(cursorTemp);
 	GetOptionOfCursor().UniformScale(1.5);			

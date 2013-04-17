@@ -11,9 +11,12 @@ TextureManager::~TextureManager()
 	
 void TextureManager::LoadTexture(std::string filename)
 {
+	std::string texturelocation = "textures/";
+	texturelocation+=filename;
 	if (textureMap.count(filename) == 0 ) {
 		textureMap[filename] = CTexture();
-		textureMap[filename].LoadBitmap(filename.c_str(), true, false);
+		
+		textureMap[filename].LoadBitmap(texturelocation.c_str(), true, false);
 		std::cout << "Successfull Load: " << filename << std::endl;
 	}
 }

@@ -21,8 +21,8 @@ MyPS2Application::MyPS2Application()
 {
 
 }
-
 void MyPS2Application::Run()
+//  Main application function
 {
 	Init();
 	while(!quitting_)
@@ -34,6 +34,11 @@ void MyPS2Application::Run()
 }
 
 void MyPS2Application::Init()
+//////////////////////------------------//////////////////////
+/*		Basic PS2 Initialisation function for enabling
+		pads, setting up the DMA and audio managers
+		and handling all asset loading for game states		*/
+//////////////////////------------------//////////////////////
 {
 	// Initialise control pad 0
 	if(!pad_init(PAD_0, PAD_INIT_LOCK | PAD_INIT_ANALOGUE | PAD_INIT_PRESSURE))
@@ -41,8 +46,8 @@ void MyPS2Application::Init()
 		printf("Failed to initialise control pad\n");
 		pad_cleanup(PAD_0);
 		exit(0);
-	}	
-	
+	}
+
 	// Allocate memory for the graphics data
 	SPS2Manager.Initialise(1024);	// 1024 * 4K Pages = 4MB Total
 	VIFStaticDMA.Initialise(512);	// 512 * 4K Pages = 2MB Static DMA
@@ -78,12 +83,24 @@ void MyPS2Application::Init()
 }
 
 void MyPS2Application::CleanUp()
+//////////////////////------------------//////////////////////
+/*		Clean up the DMAs, turn off any residual pad 
+			rumble and clean up the pads					*/
+//////////////////////------------------//////////////////////
 {
 	SPS2Manager.CleanUp();
+	set_actuator(PAD_0, 0, 0);	
 	pad_cleanup(PAD_0);
 }
 
 void MyPS2Application::Update()
+//////////////////////------------------//////////////////////
+/*		Main Update function, update pads for recent 
+		input, do the very basic input checks for
+		quitting out via start+select and screen
+		capture, then call the update function of
+				the current game state						*/
+//////////////////////------------------//////////////////////
 {
 	// Tell DMAC to send previous graphics data to Graphics Synthesiser (GS)
 	VIFDynamicDMA.Fire();
@@ -92,7 +109,12 @@ void MyPS2Application::Update()
 	pad_update(PAD_0);
 	
 	// Check for exit condition	
-	if((pad[0].buttons & PAD_START)&&(pad[0].buttons & PAD_SELECT)) quitting_ = true;	
+	if((pad[0].buttons & PAD_START)&&(pad[0].buttons & PAD_SELECT)) quitting_ = true;
+	
+	if ((pad[0].buttons & PAD_R2) && (pad[0].buttons & PAD_R1)) {			//  Take pretty pictures.
+		cout << "Pretty Picture incoming!" << endl;			
+		SPS2Manager.ScreenShot();
+	}	
 	
 	//  Run the current state, then check for any changes to the state after logic is complete
 	currentState->Update();
@@ -102,6 +124,9 @@ void MyPS2Application::Update()
 }
 
 void MyPS2Application::Render()
+//////////////////////------------------//////////////////////
+/*		Tell the current gamestate to draw to the screen	*/
+//////////////////////------------------//////////////////////
 {
 	// Render the active state
 	SPS2Manager.BeginScene();
@@ -110,36 +135,37 @@ void MyPS2Application::Render()
 }
 
 void MyPS2Application::CheckState()
+//////////////////////------------------//////////////////////
+/*		Check for state transitions and switch the
+		current state pointer to the correct state			*/
+//////////////////////------------------//////////////////////
 {
 	GameState* oldstate = currentState;
 	switch (currentState->GetReturn()) {
 		case GameState::NONE :			return;
-		case GameState::STARTUP : 		currentState = &startupState;
-//										std::cout << "Enter State: Startup" << std::endl;		
+		case GameState::STARTUP : 		currentState = &startupState;	
 										break;
-		case GameState::MENU : 			currentState = &menuState;
-//										std::cout << "Enter State: Menu" << std::endl;			
+		case GameState::MENU : 			currentState = &menuState;	
 										break;
 		case GameState::OPTIONS : 		currentState = &optionsState;
-										currentState->PriorState(oldstate);	
-//										std::cout << "Enter State: Options" << std::endl;											
+										if (oldstate == &pauseState) {				// This is a special case for when options is
+											currentState->PriorState(&playState);	// opened from the pause menu, this allows
+										} else {									// the pause menu to draw the current state of
+											currentState->PriorState(oldstate);		// play in the background, like the primary pause menu
+										}										
 										break;
 		case GameState::HELP : 			currentState = &helpState;
-										currentState->PriorState(oldstate);
-//										std::cout << "Enter State: Help" << std::endl;											
+										currentState->PriorState(oldstate);								
 										break;									
 		case GameState::GAMEACTIVE :	currentState = &playState;
-//										std::cout << "Enter State: GameActive" << std::endl;
 										playState.StartPlayMusic();
-										playState.PassOptions(optionsState.GetOptions());
-										break;
+										playState.PassOptions(optionsState.GetOptions());		// Whenever we enter the play state
+										break;													// we pass in the selected options as well
 		case GameState::GAMEPAUSED : 	currentState = &pauseState;
-										currentState->PriorState(&playState);
-//										std::cout << "Enter State: Paused" << std::endl;											
+										currentState->PriorState(&playState);										
 										break;
 		case GameState::GAMEWIN :		currentState = &winState;
-										currentState->PriorState(&playState);
-//										std::cout << "Enter State: Win" << std::endl;			
+										currentState->PriorState(&playState);	
 										break;
 		case GameState::GAMELOSE : 		currentState = &loseState;
 										currentState->PriorState(&playState);		

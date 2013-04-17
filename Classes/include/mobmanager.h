@@ -31,6 +31,7 @@ public:
 	void ShootMobs(float distToWallAtCursor, int damage);
 	void SetMobHitpoints(int hp);
 	void SetMobDamage(int damage);
+	void SetMobSpeed(float speed);
 	int CheckMobDealtDamage();
 	void ClearMobs();
 	

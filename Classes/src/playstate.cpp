@@ -41,7 +41,7 @@ void PlayState::Initialise()
 void PlayState::Update()
 {
 	float timeDif = timer.GetTimeDeltaSeconds();
-	if (timeDif > 1.0f) {
+	if (timeDif > 0.1f) {
 		timeDif = 0.0f;
 	}
 	
@@ -118,14 +118,18 @@ void PlayState::PassOptions(Options options)
 	float sens = float(options.sensitivity)*2.0f + 2.0f;
 	player.SetSensitivity(sens);
 	
-	if (options.rumble == RUMBLEON) {
-		player.EnableRumble();
+	if (options.rumble == Options::RUMBLEON) {
+		enable_actuator(0,1,1);
 	} else {
-		player.DisableRumble();
+		enable_actuator(0,0,0);
 	}
 	
 	int hp = int(options.difficulty)*20 + 30;
 	int dmg = int(options.difficulty)*5 + 10;
+	float speed = float(options.difficulty)*0.3f + 1.0f;
+	testMobs.SetMobHitpoints(hp);
+	testMobs.SetMobDamage(dmg);
+	testMobs.SetMobSpeed(speed);
 }
 
 

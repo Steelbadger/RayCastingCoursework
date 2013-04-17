@@ -29,6 +29,7 @@ Mob::Mob(Vector2 pos):
 	target = Vector2(0.0f, 0.0f);
 	attacking = false;
 	wasAttacking = false;
+	speed = 1.0f;
 }
 
 Mob::~Mob()
@@ -133,7 +134,7 @@ void Mob::Update(Level& level, double timeDif)
 void Mob::WalkToTarget(Level& level, double timeDif)
 {
 	Vector2 direction = target-position;	
-	Vector2 translationVector = direction.Normalise() * timeDif;
+	Vector2 translationVector = direction.Normalise() * timeDif * speed;
 	float x, y;
 	x = position.x + (translationVector.x) + (translationVector.x/Abs(translationVector.x))*0.2;
 	y = position.y + (translationVector.y) + (translationVector.y/Abs(translationVector.y))*0.2;			

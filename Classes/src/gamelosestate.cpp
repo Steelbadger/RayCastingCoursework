@@ -6,6 +6,8 @@
 #include "pad.h"
 #include "dma.h"
 
+#include <iostream>
+
 GameLoseState::GameLoseState():
 	youLose(0, -128, 300, 150), 
 	returnSprite(0, 128, 160, 80),
@@ -28,17 +30,27 @@ void GameLoseState::Initialise()
 	
 	darkenOverlay.SetColour(0x000000);
 	darkenOverlay.SetAlpha('l');
-	darkenOverlay.SetDepth(900);	
+	darkenOverlay.SetDepth(900);
+	rumbleIntensity = 127;
 }
 
 void GameLoseState::Update()
 {
+	set_actuator(0,1,127);
+	if (rumbleIntensity > 0) {
+		rumbleIntensity--;
+	} else {
+		set_actuator(0,0,0);
+	}
 	if (pad[0].pressed & PAD_START) {
 		value = GameState::MENU;
 		if (priorState != NULL) {
 			priorState->Initialise();
-		}		
+		}
+		rumbleIntensity = 0xFF;
+		set_actuator(0,0,0);		
 	}
+
 }
 
 void GameLoseState::Render()

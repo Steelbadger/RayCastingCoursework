@@ -32,7 +32,7 @@ public:
 
 	PS2Sprite(const float x, const float y, const float width, const float height);
 	
-	~PS2Sprite();
+	virtual ~PS2Sprite();
 	
 	// This operator is required for built-in STL list functions like sort
 	int operator < (const PS2Sprite & rhs) const;
@@ -99,7 +99,7 @@ public:
 	
 	void SetUVs(int baseU, int baseV, int width, int height);
 	
-	~PS2SpriteT();
+	virtual ~PS2SpriteT();
 	
 	void Render(void) const;
 	

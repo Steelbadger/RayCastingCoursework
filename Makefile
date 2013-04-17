@@ -1,8 +1,9 @@
 TARGET = main
 
 CC = g++
-INCPATH=-I./PS2Framework/include
-CFLAGS = -g -Wall $(INCPATH) 
+INCPATH=-I./PS2Framework/include \
+		-I./Classes/include
+CFLAGS = -O3 -Wall $(INCPATH) 
 # For release change -g to -O3
 
 .SUFFIXES: .cpp .o
@@ -16,29 +17,28 @@ OBJS = 	PS2Framework/src/primitives.o \
 		PS2Framework/src/sps2wrap.o \
 		PS2Framework/src/texture.o \
 		PS2Framework/src/font.o \
-		renderer.o \
-		raycaster.o \
-		vector2.o \
-		level.o \
-		mob.o \
-		mobmanager.o \
-		animatedsprite.o \
-		gun.o \
-		shotgun.o \
-		playstate.o \
-		startupstate.o \
-		menustate.o \
-		pausedstate.o \
-		helpstate.o \
-		gamewinstate.o \
-		gamelosestate.o \
-		optionsstate.o \
-		options.o \
-		player.o \
-		timer.o \
-		audio.o \
-		audiomanager.o \
-		texturemanager.o \
+		Classes/src/renderer.o \
+		Classes/src/raycaster.o \
+		Classes/src/vector2.o \
+		Classes/src/level.o \
+		Classes/src/mob.o \
+		Classes/src/mobmanager.o \
+		Classes/src/animatedsprite.o \
+		Classes/src/gun.o \
+		Classes/src/shotgun.o \
+		Classes/src/playstate.o \
+		Classes/src/startupstate.o \
+		Classes/src/menustate.o \
+		Classes/src/pausedstate.o \
+		Classes/src/helpstate.o \
+		Classes/src/gamewinstate.o \
+		Classes/src/gamelosestate.o \
+		Classes/src/optionsstate.o \
+		Classes/src/player.o \
+		Classes/src/timer.o \
+		Classes/src/audio.o \
+		Classes/src/audiomanager.o \
+		Classes/src/texturemanager.o \
 		MyPS2Application.o \
 		main.o
 

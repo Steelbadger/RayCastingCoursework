@@ -77,9 +77,15 @@ void PausedState::Update()
 								break;
 		}
 	}
+	if (pad[0].pressed & PAD_CIRCLE) {
+		value = GameState::GAMEACTIVE;
+	}
+	
+	
 	if (pad[0].axes[1] == 0) {
 		analogueDelay = 10;
 	}
+	set_actuator(0,0,0);
 
 	int cursorTemp = int(cursorPos);
 	if (pad[0].pressed & PAD_UP) {

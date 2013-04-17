@@ -1,5 +1,11 @@
 #ifndef __VECTOR2_H__
 #define __VECTOR2_H__
+//////////////////////--By Ross Davies--//////////////////////
+/*		A simple Vector2 maths class, with all the common
+		operations needed for basic vector functionality	*/
+//////////////////////////////////////////////////////////////
+
+
 
 #include "ps2maths.h"
 #include <iostream>
@@ -21,12 +27,12 @@ public:
 	// Special arithmetic
 	float Dot(const Vector2 & rhs) const;
 
-
 	Vector2 & operator*=(const float s);
 	Vector2 & operator/=(const float s);
 
 	bool operator==(const Vector2 & rhs) const;
 
+	
 	// Miscellaneous
 	float Length() const;
 	float LengthSqr() const;
@@ -35,6 +41,7 @@ public:
 	Vector2 Rotate(float theta);
 	Vector2 Translate(Vector2 direction, float distance);
 	
+	// Output
 	friend ostream& operator<<(ostream& out, Vector2& object)
 	{
 		out << "(" << object.x << ", " << object.y << ")";
@@ -45,6 +52,8 @@ public:
 	// Member data
 	float x,y;
 };
+
+// Normal operators for Vector arithmetic
 
 inline Vector2 operator + (const Vector2 &v1,
 						   const Vector2 &v2)

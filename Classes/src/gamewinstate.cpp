@@ -41,6 +41,7 @@ void GameWinState::Update()
 			priorState->Initialise();
 		}		
 	}
+	set_actuator(0,0,0);
 }
 
 void GameWinState::Render()

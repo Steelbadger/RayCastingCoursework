@@ -16,7 +16,7 @@ public:
 	virtual void Initialise();
 	virtual void Update();
 	virtual void Render();
-	virtual void PriorState(GameState* priorState)
+	virtual void PriorState(GameState* priorState);
 	
 	Options GetOptions();
 	void SaveOptions();

@@ -44,6 +44,7 @@ public:
 	void WalkToTarget(Level& level, double timeDif);
 	void SetDamage(int dmg){baseDamage = dmg;}
 	void SetHitpoints(int hp);
+	void SetSpeed(float s){speed = s;}
 
 private:
 	Vector2 position;
@@ -51,6 +52,7 @@ private:
 	float height;
 	int baseHealth;	
 	int health;
+	float speed;
 	AnimatedSprite sprite;
 	std::string currentTex;
 	std::string texFile;

@@ -15,6 +15,7 @@
 
 //*** TYPES AND CLASSES
 class MyPS2Application
+//  DOOOOOOOM
 {
 public:
 	MyPS2Application();

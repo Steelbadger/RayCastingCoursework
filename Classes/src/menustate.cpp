@@ -57,6 +57,11 @@ void MenuState::Update()
 							break;
 		}
 	}
+	
+	if (pad[0].pressed & PAD_CIRCLE) {
+		value = GameState::STARTUP;
+	}
+	
 	if (pad[0].axes[1] == 0) {
 		analogueDelay = 10;
 	}

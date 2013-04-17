@@ -5,6 +5,10 @@
 #include "shotgun.h"
 #include "vector2.h"
 
+#include "primitives.h"
+
+#include <string>
+
 class Level;
 
 class Player
@@ -23,10 +27,11 @@ public:
 	Vector2 GetPosition();
 	Vector2 GetDirection();
 	void SetSensitivity(float s){sensitivity = s;}
-	void EnableRumble(){rumbleOn = true;}
-	void DisableRumble(){rumbleOn = false;}
 	
 private:
+
+	void UpdateHealthBar();
+	
 	Gun pistol;
 	Shotgun shotgun;
 	Gun* activeWeapon;
@@ -35,9 +40,17 @@ private:
 	int hitpoints;
 	Vector2 position;
 	Vector2 direction;
+	
+	PS2Sprite healthBar;
+	PS2SpriteT ammo;
+	
+	std::string ammoImg;
+	
+	char rumbleIntensity;
+	
 	Level* level;
 	bool firedWeapon;
-	bool rumbleOn;
+	const int MAXHP;
 	
 };
 
