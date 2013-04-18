@@ -36,10 +36,15 @@ public:
 	virtual void PriorState(GameState* priorState);
 	
 private:
+
+	//  pointer to prior state so that we can return to
+	//  it upon close of this state
 	GameState* priorState;
 	
+	//  Fullscreen sprite for drawing help image to
 	PS2SpriteT helpScreen;	
 	
+	//  help image splash texture
 	std::string helpImage;
 };
 

@@ -5,7 +5,7 @@
 		game states are derived, describes the possible 
 			gamestates and provides function hooks for 
 		primary state functions (Initialise, Update,
-					Render and PriorState)*/
+					Render and PriorState)					*/
 //////////////////////////////////////////////////////////////
 
 class GameState

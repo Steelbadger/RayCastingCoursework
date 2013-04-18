@@ -3,7 +3,8 @@
 #include "texturemanager.h"
 #include "pad.h"
 
-
+//  Setup all the sprites in their correct locations
+//  and store texture file names
 OptionsState::OptionsState():
 	optionsTitle(0, -128, 300, 150),
 	difficulty(-80, 32, 128, 32),
@@ -28,17 +29,21 @@ OptionsState::OptionsState():
 
 OptionsState::~OptionsState()
 {
-
+	//Nuffin
 }
 
 void OptionsState::Initialise()
+//  Continue setting up the sprites and set our initial options
 {
-	originalOptions.difficulty = Options::EASY;
-	originalOptions.rumble = Options::RUMBLEOFF;
+	//  Initial Options set
+	originalOptions.difficulty = Options::MEDIUM;
+	originalOptions.rumble = Options::RUMBLEON;
 	originalOptions.sensitivity = Options::MED;
 	
 	currentOptions = originalOptions;
 	
+	
+	//  Set sprite UV coords and depths
 	optionsTitle.SetUVs(0,0,256,128);
 	optionsTitle.SetDepth(901);
 	
@@ -66,19 +71,23 @@ void OptionsState::Initialise()
 	reset.SetUVs(0, 192, 256, 64);
 	reset.SetDepth(901);		
 	
+	//  Our overlay is black and semi transparent
 	darkenOverlay.SetColour(0x000000);
 	darkenOverlay.SetAlpha('l');
 	darkenOverlay.SetDepth(900);
 	
+	//  Load all the necessary textures into memory
 	TexManager.LoadTexture(difficultyImg);
 	TexManager.LoadTexture(rumbleImg);
 	TexManager.LoadTexture(sensitivityImg);	
 	TexManager.LoadTexture(titleImg);
 
+	//  Delay for analogue stick control
 	analogueDelay = 10;
 }
 
 void OptionsState::Update()
+//  Check input and update all sprites based on that input
 {
 	CheckInput();
 	SetDifficultyOptionSprite();
@@ -88,13 +97,18 @@ void OptionsState::Update()
 
 void OptionsState::Render()
 {
+	//  If the background is a playstate then draw it (if background pointer
+	//  is to menu we don't draw it)
 	if (background != NULL) {
 		if (background->GetState() == GameState::GAMEACTIVE) {
 			background->Render();
 		}
 	}
+	//  Draw the darken overlay (if background points to menu this is
+	//  completely opaque)
 	darkenOverlay.Render();
 	
+	//  Draw the options titles and selections
 	TexManager.UploadTextureToBuffer(difficultyImg, TextureManager::BUFFER1);
 	TexManager.UploadTextureToBuffer(titleImg, TextureManager::BUFFER2);
 	TexManager.SetTexture(titleImg);
@@ -122,6 +136,7 @@ void OptionsState::Render()
 }
 
 void OptionsState::PriorState(GameState* prior)
+//  Set the prior state, expects either a MenuState or a PlayState
 {
 	background = prior;
 	if (background->GetState() == GameState::GAMEACTIVE) {
@@ -132,11 +147,13 @@ void OptionsState::PriorState(GameState* prior)
 }
 
 Options OptionsState::GetOptions()
+//  Return the options we have set
 {
 	return currentOptions;
 }
 
 PS2SpriteT& OptionsState::GetOptionOfCursor()
+//  Which sprite is currently selected by the cursor
 {
 	switch (cursorPos) {
 		case DIFFICULTY: 	return difficulty;
@@ -151,24 +168,32 @@ PS2SpriteT& OptionsState::GetOptionOfCursor()
 }
 
 void OptionsState::SetDifficultyOptionSprite()
+//  Set UVs for the selected difficulty option sprite so that it shows the
+//  correct option
 {
 	int offs = int(currentOptions.difficulty);
 	diffOpt.SetUVs(0, 64*offs, 256, 64);
 }
 
 void OptionsState::SetRumbleOptionSprite()
+//  Set UVs for the selected rumble option sprite so that it shows the
+//  correct option
 {
 	int offs = int(currentOptions.rumble);
 	rumbleOpt.SetUVs(0, 64*offs, 256, 64);
 }
 
 void OptionsState::SetSensitivityOptionSprite()
+//  Set UVs for the selected sensitivity option sprite so that it shows the
+//  correct option
 {
 	int offs = int(currentOptions.sensitivity);
 	sensOpt.SetUVs(0, 64*offs, 256, 64);
 }
 
 void OptionsState::CheckInput()
+//  Bit of a monster, just check all input possibilities and act on it
+//  Move up and down menu options, side to side changes current selected option
 {
 	if (pad[0].pressed & PAD_CROSS) {
 		switch (cursorPos) {

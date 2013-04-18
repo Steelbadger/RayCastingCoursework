@@ -5,7 +5,7 @@
 #include "pad.h"
 #include "dma.h"
 
-
+//  Constructor, create the sprites and setup texture strings
 MenuState::MenuState() : 
 	play(0, 0, 128, 32),
 	options(0, 32, 128, 32),
@@ -19,9 +19,11 @@ MenuState::MenuState() :
 {}
 
 MenuState::~MenuState()
+//  Empty
 {}
 
 void MenuState::Initialise()
+//  Continue setting up the sprites and load the textures
 {
 	background.SetUVs(0, 0, 256, 256);
 	background.SetDepth(900);
@@ -43,8 +45,10 @@ void MenuState::Initialise()
 }
 
 void MenuState::Update()
+//  Check for input and modify menu sprites based on this input
+//  to indicate a current cursor selection
 {
-	
+	//  Press cross to select an option, set the gamestate return value
 	if (pad[0].pressed & PAD_CROSS) {
 		switch (cursorPos) {
 			case PLAY: 		value = GameState::GAMEACTIVE;
@@ -58,19 +62,27 @@ void MenuState::Update()
 		}
 	}
 	
+	//  Circle to return to startup screen
 	if (pad[0].pressed & PAD_CIRCLE) {
 		value = GameState::STARTUP;
 	}
 	
+	//  Reset the delay number when the player releases the stick
+	//  stops the response from feeling 'sticky' then the player just flicks the stick
 	if (pad[0].axes[1] == 0) {
 		analogueDelay = 10;
 	}
 
+	//  Convert the enum to an int so we can use maths
 	int cursorTemp = int(cursorPos);
+	
+	//  If we hit up then decrement the cursor (and change the size of the current selection
+	//  back to normal)
 	if (pad[0].pressed & PAD_UP) {
 		cursorTemp--;
 		GetOptionOfCursor().UniformScale(1.0);
 	}
+	//  Do same if we hit up on the left analogue stick
 	if (pad[0].axes[1] < 0) {
 		analogueDelay -=pad[0].axes[1];
 		if (analogueDelay > 10) {
@@ -80,11 +92,13 @@ void MenuState::Update()
 		}
 	}	
 	
+	//  If we hit down then increment the cursor (and change the size of the current selection
+	//  back to normal)	
 	if (pad[0].pressed & PAD_DOWN) {
 		cursorTemp++;
 		GetOptionOfCursor().UniformScale(1.0);		
 	}
-	
+	//  Do same if we hit down on the left analogue stick	
 	if (pad[0].axes[1] > 0) {
 		analogueDelay += pad[0].axes[1];
 		if (analogueDelay > 10) {
@@ -92,15 +106,22 @@ void MenuState::Update()
 			cursorTemp++;
 			GetOptionOfCursor().UniformScale(1.0);
 		}
-	}		
+	}
+	
+	//  Make sure we have not gone beyond the bounds of the menu
 	cursorTemp = (cursorTemp > 3 ? 3 : cursorTemp);
 	cursorTemp = (cursorTemp < 0 ? 0 : cursorTemp);
+	
+	//  Set the new modified value back into the enumerated type
 	cursorPos = MenuOption(cursorTemp);
+	
+	//  Scale the current selection (larger) to provide visual feedback
 	GetOptionOfCursor().UniformScale(1.5);		
 
 }
 
 void MenuState::Render()
+//  Draw all the options to the screen
 {
 	TexManager.UploadTextureToBuffer(splashImage, TextureManager::BUFFER1);
 	TexManager.UploadTextureToBuffer(menuImage, TextureManager::BUFFER2);
@@ -115,6 +136,7 @@ void MenuState::Render()
 
 
 PS2SpriteT& MenuState::GetOptionOfCursor()
+//  Check the enumerated type to find the sprite associated with that option
 {
 		switch (cursorPos) {
 			case PLAY: 		return play;
