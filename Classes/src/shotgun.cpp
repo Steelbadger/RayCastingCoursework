@@ -1,9 +1,16 @@
+//////////////////////------------------//////////////////////
+/*			
+						By Ross Davies
+															*/
+//////////////////////------------------//////////////////////
+
+
 #include "shotgun.h"
 
 #include "texturemanager.h"
 #include "audiomanager.h"
 
-
+//  Setup the sprites and store the filenames for assets
 Shotgun::Shotgun()
 {
 	textureFile = "shotgunFire.bmp";
@@ -14,9 +21,12 @@ Shotgun::Shotgun()
 }
 
 Shotgun::~Shotgun()
-{}
+{
+	//lolnope
+}
 
 void Shotgun::Init()
+//  Continue setting up the sprites, load in the texture files and audio
 {
 	sprite.SetNumberOfFrames(6);
 	sprite.SetAnimationRate(0.1f);
@@ -37,9 +47,9 @@ void Shotgun::Init()
 }
 
 void Shotgun::Render()
+//  Depending on which animation set we're using draw the relevant sprite/texture
 {
 	if (reloadSprite.IsAnimating()) {
-//		std::cout << "Reload Sprite to Draw" << std::endl;
 		TexManager.UploadTextureToBuffer(reloadImage, TextureManager::BUFFER2);
 		TexManager.SetTexture(reloadImage);	
 		reloadSprite.Render();
@@ -52,6 +62,7 @@ void Shotgun::Render()
 
 
 void Shotgun::Update()
+//  Update the animations
 {
 	if (reloadSprite.IsAnimating()) {
 		reloadSprite.Update();
@@ -61,6 +72,7 @@ void Shotgun::Update()
 }
 
 void Shotgun::Fire()
+//  Begin the animation to fire and play the sound file
 {
 	Audio.Reset(shotSound);
 	sprite.AnimateOnce();
@@ -69,6 +81,7 @@ void Shotgun::Fire()
 }
 
 void Shotgun::Reload()
+//  Play the animation to reload
 {
 	if (MAXAMMO - ammo > 0) {
 		reloadSprite.AnimateLoop(MAXAMMO-ammo);

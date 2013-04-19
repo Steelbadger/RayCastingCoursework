@@ -1,3 +1,9 @@
+//////////////////////------------------//////////////////////
+/*			
+						By Ross Davies
+															*/
+//////////////////////------------------//////////////////////
+
 #include "optionsstate.h"
 
 #include "texturemanager.h"
@@ -195,6 +201,9 @@ void OptionsState::CheckInput()
 //  Bit of a monster, just check all input possibilities and act on it
 //  Move up and down menu options, side to side changes current selected option
 {
+
+	//  when we hit cross check where the cursor is and either increment the option of the cursor or
+	//  do the operation of the button (reset options or save and return to previous)
 	if (pad[0].pressed & PAD_CROSS) {
 		switch (cursorPos) {
 			case DIFFICULTY: 	currentOptions.difficulty = Options::Difficulty(int(currentOptions.difficulty)+1);
@@ -214,17 +223,22 @@ void OptionsState::CheckInput()
 		}
 	}
 	
+	//  On circle save options and return to previous
 	if (pad[0].pressed & PAD_CIRCLE) {
-		currentOptions = originalOptions;	
+		SaveOptions()	
 		value = background->GetState();
 		if (value == GameState::GAMEACTIVE) {
 			value = GameState::GAMEPAUSED;
 		}		
 	}
 	
+	//  Reset the analogue timer when stick is zeroed to increase responsiveness
 	if (pad[0].axes[1] == 0 && pad[0].axes[0] == 0) {
 		analogueDelay = 10;
 	}
+	
+	//  Create an integer to increment/decrement based on input, will be used to work out
+	//  how we've changed the options at the end of the update function
 	int optionsOffset;
 	optionsOffset = 0;
 	if (pad[0].axes[0] < 0) {
@@ -249,9 +263,12 @@ void OptionsState::CheckInput()
 	if (pad[0].pressed & PAD_LEFT) {
 		optionsOffset--;
 	}	
-		
+	
+	//  Temporary storage for enum as an int for maths
 	int tempOption;
 	
+	//  Depending on which option we're editing there are different limits on the options maths
+	//  Find the right option and apply the limits (wrap round from end to beginning if we go out of bounds)
 	switch (cursorPos) {
 		case DIFFICULTY: 	tempOption = int(currentOptions.difficulty) + optionsOffset;
 							tempOption = (tempOption > 3 ? 3 : tempOption%4);
@@ -268,11 +285,15 @@ void OptionsState::CheckInput()
 							tempOption = (tempOption < 0 ? 0 : tempOption%3);
 							currentOptions.sensitivity = Options::Sensitivity(tempOption);		
 							break;
-		default:			break;
+		default:			//  Do nothing, this happens when Reset or Return are the current option
+							break;
 	}	
 	
-	
+	//  Temporary storage for enum as int for maths
 	int cursorTemp = int(cursorPos);
+	
+	//  Based on up/down presses on D-pad and analogue stick  increment or decrement
+	//  the temporary cursor as necessary
 	if (pad[0].pressed & PAD_UP) {
 		cursorTemp--;
 		GetOptionOfCursor().UniformScale(1.0);
@@ -301,14 +322,21 @@ void OptionsState::CheckInput()
 			GetOptionOfCursor().UniformScale(1.0);
 		}
 	}
-
+	
+	
+	//  Make sure the temporary variable has a value that maps to an enum state (clamp at ends)
 	cursorTemp = (cursorTemp > 4 ? 4 : cursorTemp);
 	cursorTemp = (cursorTemp < 0 ? 0 : cursorTemp);
+	
+	//  Convert back to the enum
 	cursorPos = OptionSelect(cursorTemp);
+	
+	//  Find the sprite we've selected and scale it up a bit
 	GetOptionOfCursor().UniformScale(1.5);			
 }
 
 void OptionsState::SaveOptions()
+//  Store the options we've set for use in the play state
 {
 	originalOptions = currentOptions;
 }

@@ -1,3 +1,9 @@
+//////////////////////------------------//////////////////////
+/*			
+						By Ross Davies
+															*/
+//////////////////////------------------//////////////////////
+
 #include "raycaster.h"
 #include "ps2maths.h"
 #include <iostream>
@@ -17,42 +23,43 @@ RayCaster::~RayCaster()
 
 
 RayReturnData RayCaster::CastRay(Vector2 base, Vector2 direction, Level& level)
+//  Main raycasting function, casts two rays, one that only checks against x-parallel grid 
+//  and one that only check y-parallel grid lines, it then returns the ray with the shortest length
 {
 	RayReturnData firstHorizCollision = CheckHorizontalDivisions(base, direction, level);
 	RayReturnData firstVerticalCollision = CheckVerticalDivisions(base, direction, level);
 
 	RayReturnData output = Min(firstHorizCollision, firstVerticalCollision);
-
-//	RayReturnData output = CheckInterleavedDivisions(base, direction, level);
 	
 	return output;
 }
 
 RayReturnData RayCaster::AltCastRay(Vector2 base, Vector2 direction, Level& level)
+//  Non operative function for checking both sets at the same time (hoped to gain speed, doesn't
+//  seem to improve framerate)
 {
 	RayReturnData output = CheckInterleavedDivisions(base, direction, level);
 	return output;
 }
 
 RayReturnData RayCaster::CheckInterleavedDivisions(Vector2 base, Vector2 direction, Level& level)
+//  Non operative function that checks both horizontal and vertical gridline intersections in parallel
+//  The hope was to gain performance due to being able to bail early, did not yield improved performance
+//  and proved difficult to bugfix
 {
 	bool checkHoriz = true;
 	bool checkVerti = true;
 	//  Catch case where ray is aligned to the x-axis and return very large distance and default wall
 	if (Abs(direction.y) < 0.001) {
 		checkHoriz = false;
-//		std::cout << "Check Horiz Set To False" << std::endl;
 	}
 	if (Abs(direction.x) < 0.001) {
 		checkVerti = false;
-//		std::cout << "Check Verti Set To False" << std::endl;
 	}	
 	
 	//  convert the y-direction (when level viewed in PLAN) into -1/+1 for up/down direction respectively
 	int verticalDirection = int(direction.y/Abs(direction.y));	
-	int horizontalDirection = int(direction.x/Abs(direction.x));
-//	std::cout << "Vdir: " << verticalDirection << "\tHdir: " << horizontalDirection << std::endl;
-	
+	int horizontalDirection = int(direction.x/Abs(direction.x));	
 	
 	//  Offset for stepping along grid
 	int offset = 1;
@@ -78,7 +85,6 @@ RayReturnData RayCaster::CheckInterleavedDivisions(Vector2 base, Vector2 directi
 	Vector2 pointOfIntersect;
 	
 	while(checkHoriz || checkVerti) {
-//		std::cout << "Loop: " << offset << std::endl;
 		if (checkHoriz == true) {
 			//  If we're NOT already on a boundary, 
 			if (Mod(base.y + offset*verticalDirection, 1.0f) != 0) {
@@ -107,8 +113,7 @@ RayReturnData RayCaster::CheckInterleavedDivisions(Vector2 base, Vector2 directi
 			
 			if ( Vector2(pointOfIntersect-base).LengthSqr() > MAXRANGESQR) {
 				firstHorizontalObject = RayReturnData(99999.99f, 1);
-				checkHoriz = false;
-//				std::cout << "Out of Range: Check Horiz Set To False" << std::endl;					
+				checkHoriz = false;		
 			}			
 			
 			//  Floor the x intersect point to find grid coordinate
@@ -122,8 +127,7 @@ RayReturnData RayCaster::CheckInterleavedDivisions(Vector2 base, Vector2 directi
 			//  so return the wall and distance to wall
 			if ( hitType > 0 ) {
 				firstHorizontalObject = RayReturnData(Vector2(pointOfIntersect-base).Length(), (0.5 * (verticalDirection + 1)) - Mod(xPoI,1) * verticalDirection  , hitType);
-				checkHoriz = false;	
-//				std::cout << "Found Wall: Check Horiz Set To False" << std::endl;					
+				checkHoriz = false;				
 			}
 		}
 		
@@ -156,8 +160,7 @@ RayReturnData RayCaster::CheckInterleavedDivisions(Vector2 base, Vector2 directi
 			
 			if ( Vector2(pointOfIntersect-base).LengthSqr() > MAXRANGESQR) {
 				firstVerticalObject = RayReturnData(99999.99f, 1);
-				checkVerti = false;
-//				std::cout << "Out of Range: Check Verti Set To False" << std::endl;				
+				checkVerti = false;		
 			}			
 			
 			//  Floor the x intersect point to find grid coordinate
@@ -169,26 +172,22 @@ RayReturnData RayCaster::CheckInterleavedDivisions(Vector2 base, Vector2 directi
 			//  so return the wall and distance to wall		
 			if ( hitType > 0 ) {
 				firstVerticalObject = RayReturnData(Vector2(pointOfIntersect-base).Length(), (0.5 * (-horizontalDirection + 1)) + Mod(yPoI,1)*horizontalDirection , hitType);
-				checkVerti = false;		
-//				std::cout << "Found Wall: Check Verti Set To False" << std::endl;					
+				checkVerti = false;					
 			}	
 		}
 		
 		//  If we didn't return then increment and try again
 		offset++;
 	}
-	
-//	std::cout << "Done Loop" << std::endl;
-
 	return Min(firstHorizontalObject, firstVerticalObject);
-
-
 }
 
 RayReturnData RayCaster::CheckHorizontalDivisions(Vector2 base, Vector2 direction, Level& level)
+//  Checks intersections of the ray with grid lines parallel to the x-axis, if it travels more than MAXRANGE
+//  it bails early and returns a default wall at maximum distance
 {
 	//  Catch case where ray is aligned to the x-axis and return very large distance and default wall
-	if (Abs(direction.y) < 0.001) {
+	if (Abs(direction.y) < 0.001f) {
 		return RayReturnData(99999.99f, 1);
 	}
 	
@@ -250,7 +249,9 @@ RayReturnData RayCaster::CheckHorizontalDivisions(Vector2 base, Vector2 directio
 		//  so return the wall and distance to wall
 		if ( hitType > 0 ) {
 			return RayReturnData(Vector2(pointOfIntersect-base).Length(), (0.5 * (verticalDirection + 1)) - Mod(xPoI,1) * verticalDirection  , hitType);
-//			return RayReturnData(Vector2(pointOfIntersect-base).Length(), Mod(xPoI,1), hitType);
+		} else if (Vector2(pointOfIntersect-base).LengthSqr() > MAXRANGESQR) {
+		//  If we've stepped beyond the range we should draw to, then stop checking
+			return RayReturnData(99999.99f, 1);
 		}
 		
 		//  If we didn't return then increment and try again
@@ -261,6 +262,8 @@ RayReturnData RayCaster::CheckHorizontalDivisions(Vector2 base, Vector2 directio
 }
 
 RayReturnData RayCaster::CheckVerticalDivisions(Vector2 base, Vector2 direction, Level& level)
+//  Checks intersections of the ray with grid lines parallel to the y-axis, if it travels more than MAXRANGE
+//  it bails early and returns a default wall at maximum distance
 {
 	//  Catch case where ray is aligned to the y-axis and return very large distance and default wall
 	if (Abs(direction.x) < 0.001) {
@@ -324,8 +327,10 @@ RayReturnData RayCaster::CheckVerticalDivisions(Vector2 base, Vector2 direction,
 		//  0 is empty space, if it is anything other than zero then it's a kind of wall,
 		//  so return the wall and distance to wall		
 		if ( hitType > 0 ) {
-			return RayReturnData(Vector2(pointOfIntersect-base).Length(), (0.5 * (-horizontalDirection + 1)) + Mod(yPoI,1)*horizontalDirection , hitType);
-//			return RayReturnData(Vector2(pointOfIntersect-base).Length(), Mod(yPoI,1), hitType);			
+			return RayReturnData(Vector2(pointOfIntersect-base).Length(), (0.5 * (-horizontalDirection + 1)) + Mod(yPoI,1)*horizontalDirection , hitType);	
+		} else if (Vector2(pointOfIntersect-base).LengthSqr() > MAXRANGESQR) {
+		//  If we've stepped beyond the range we should draw to, then stop checking
+			return RayReturnData(99999.99f, 1);
 		}
 		//  If we didn't return then increment and try again		
 		offset++;
