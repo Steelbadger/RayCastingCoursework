@@ -93,15 +93,15 @@ void Player::Update(double timeDif)
 	float x, y;
 	
 	//  Positions used to check collision are the base + translation +/- 0.3 (direction of travel) to stop intersection of 
-	x = position.x + (translationVector.x) + (translationVector.x/Abs(translationVector.x))*0.3;
-	y = position.y + (translationVector.y) + (translationVector.y/Abs(translationVector.y))*0.3;
+	x = position.x + (translationVector.x) + (translationVector.x/Abs(translationVector.x))*0.2;
+	y = position.y + (translationVector.y) + (translationVector.y/Abs(translationVector.y))*0.2;
 
 	//  Check for the player firing their weapon
 	firedWeapon = false;
 	if ((pad[0].pressed & PAD_R2) && !activeWeapon->IsFiring() && activeWeapon->HasAmmo()) {
 		firedWeapon = true;
 		activeWeapon->Fire();
-		if (activeWeapon = &pistol) {
+		if (activeWeapon == &pistol) {
 			if (rumbleIntensity < 25) {
 				rumbleIntensity = 25;		//  Tiny bit of rumble on pistol shot
 			}
@@ -127,7 +127,7 @@ void Player::Update(double timeDif)
 	}
 	
 	//  Switch weapon
-	if ((pad[0].pressed & PAD_R1) && !activeWeapon->IsFiring()) {
+	if ((pad[0].pressed & PAD_L1) && !activeWeapon->IsFiring()) {
 		if (activeWeapon == &pistol) {
 			activeWeapon = &shotgun;
 			ammo.SetUVs(0,0,32,32);

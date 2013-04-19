@@ -225,7 +225,7 @@ void OptionsState::CheckInput()
 	
 	//  On circle save options and return to previous
 	if (pad[0].pressed & PAD_CIRCLE) {
-		SaveOptions()	
+		SaveOptions();
 		value = background->GetState();
 		if (value == GameState::GAMEACTIVE) {
 			value = GameState::GAMEPAUSED;
