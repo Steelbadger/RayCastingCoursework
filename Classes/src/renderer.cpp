@@ -69,8 +69,8 @@ void Renderer::BuildScene()
 		float range1 = rayMap[i].range;
 		float range2 = rayMap[i+1].range;
 		//  Avoid divide by zero
-		range1 = (range1 <= 0 ? 0.0001f : range1);
-		range2 = (range2 <= 0 ? 0.0001f : range2);		
+		range1 = (range1 <= 0.1f ? 0.1f : range1);
+		range2 = (range2 <= 0.1f ? 0.1f : range2);		
 		sprites[i].Skew(640/range1,640/range2);
 		//  Set the depth of the sprite so z-sorting is done properly
 		sprites[i].SetDepth(800-((range1 + range2)*2));

@@ -73,6 +73,7 @@ void Player::Update(double timeDif)
 {
 	//  First turn as indicated by right analogue stick
 	direction.Rotate(pad[0].axes[2]*timeDif * sensitivity);
+	direction.NormaliseSelf();
 	
 	//  Find the direction vector we wish to strafe along
 	Vector2 strafeDirection = direction;
@@ -87,27 +88,20 @@ void Player::Update(double timeDif)
 	}
 	
 	//  Sum up our translations		unit direction			forward/backwards component							unit strafe					stafe component
-	Vector2 translationVector = direction.Normalise() * (-pad[0].axes[1] * timeDif * speed * reverseMult) + strafeDirection.Normalise() * (pad[0].axes[0] * timeDif * speed);
-	
-	//  Decompose into individual components
-	float x, y;
-	
-	//  Positions used to check collision are the base + translation +/- 0.3 (direction of travel) to stop intersection of 
-	x = position.x + (translationVector.x) + (translationVector.x/Abs(translationVector.x))*0.2;
-	y = position.y + (translationVector.y) + (translationVector.y/Abs(translationVector.y))*0.2;
+	Vector2 translationVector = direction * (-pad[0].axes[1] * timeDif * speed * reverseMult) + strafeDirection * (pad[0].axes[0] * timeDif * speed);
 
 	//  Check for the player firing their weapon
 	firedWeapon = false;
-	if ((pad[0].pressed & PAD_R2) && !activeWeapon->IsFiring() && activeWeapon->HasAmmo()) {
+	if ((pad[0].pressed & PAD_L2) && !activeWeapon->IsFiring() && activeWeapon->HasAmmo()) {
 		firedWeapon = true;
 		activeWeapon->Fire();
 		if (activeWeapon == &pistol) {
-			if (rumbleIntensity < 25) {
-				rumbleIntensity = 25;		//  Tiny bit of rumble on pistol shot
+			if (rumbleIntensity < 10) {
+				rumbleIntensity = 10;		//  Tiny bit of rumble on pistol shot
 			}
 		} else {
-			if (rumbleIntensity < 40) {
-				rumbleIntensity = 40;		//  bit more rumble on shotgun shot
+			if (rumbleIntensity < 15) {
+				rumbleIntensity = 15;		//  bit more rumble on shotgun shot
 			}			
 		}
 	}
@@ -136,13 +130,26 @@ void Player::Update(double timeDif)
 			ammo.SetUVs(0,32,64,32);
 		}
 	}	
+
+	//  Decompose movement into individual components
+	float x, y;
+	float xCollisionBuffer;
+	float yCollisionBuffer;
+	
+	//  Positions used to check collision are the base + translation +/- 0.2 (direction of travel) to stop intersection of 
+	//  projection screen and level
+	x = position.x + (translationVector.x);
+	xCollisionBuffer = (translationVector.x/Abs(translationVector.x))*0.2;
+	y = position.y + (translationVector.y);
+	yCollisionBuffer = (translationVector.y/Abs(translationVector.y))*0.2;
 	
 	//  Check collision of player and level
-	if (level->At(x, position.y) == 0) {
+
+	if (level->At(x + xCollisionBuffer, position.y) == 0) {
 		position.x += translationVector.x;
 	}
 	
-	if (level->At(position.x, y) == 0) {
+	if (level->At(position.x, y + yCollisionBuffer) == 0) {
 		position.y += translationVector.y;
 	}
 	
