@@ -3,7 +3,7 @@ TARGET = main
 CC = g++
 INCPATH=-I./PS2Framework/include \
 		-I./Classes/include
-CFLAGS = -g -Wall $(INCPATH) 
+CFLAGS = -O3 -Wall $(INCPATH) 
 # For release change -g to -O3
 
 .SUFFIXES: .cpp .o

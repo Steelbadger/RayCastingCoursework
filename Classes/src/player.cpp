@@ -19,7 +19,7 @@ Player::Player():
 	healthBar(0, -240, 256, 32),
 	ammo(66, 192, 64, 64),
 	ammoImg("ammo.bmp"),
-	MAXHP(100)	
+	MAXHP(100)
 {}
 
 Player::~Player()
